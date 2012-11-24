@@ -4,7 +4,7 @@
     both will be None."""
 
 from random import randint
-po
+
 class BinarySearchTree(object):
 
 """ This class method is a recursive generator used in collaboration with 

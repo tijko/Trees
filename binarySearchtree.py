@@ -3,8 +3,6 @@
     children, where one will either be a value and the other None or
     both will be None."""
 
-from random import randint
-
 class BinarySearchTree(object):
 
 """ This class method is a recursive generator used in collaboration with 

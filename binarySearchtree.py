@@ -1,14 +1,18 @@
 """ An implementation of a complete binary search tree. The 'complete' 
     part of the this tree comes where each node will always have two
     children, where one will either be a value and the other None or
-    both will be None."""
+    both will be None.
+"""
+
+import random
 
 class BinarySearchTree(object):
 
-""" This class method is a recursive generator used in collaboration with 
-    delete_node.  The 'picker' is that this method will pick up the 
-    remaining branches off the node being deleted for re-insertion
-    into the edited tree. """
+    """ This class method is a recursive generator used in collaboration with 
+        delete_node.  The 'picker' is that this method will pick up the 
+        remaining branches off the node being deleted for re-insertion
+        into the edited tree. 
+    """
 
     def tree_picker(self, tree):
         for i in tree:
@@ -21,13 +25,10 @@ class BinarySearchTree(object):
     def insert_node(self, tree, node):
         if len(tree) == 0 or tree[0] == None:
             if len(tree) == 0:
-                tree.append(node)
-                tree.append([None])
-                tree.append([None])
+                tree.extend((node, [None], [None]))
             else:
                 tree[0] = node
-                tree.append([None])
-                tree.append([None])
+                tree.extend(([None], [None]))
         if node > tree[0]: 
             self.insert_node(tree[2], node)
         if node < tree[0]:
@@ -65,4 +66,13 @@ class BinarySearchTree(object):
         if new_tree:
             return new_tree
         return new
+
+
+if __name__ == '__main__':
+    sample_tree = []
+    bst = BinarySearchTree()
+    sample_nodes = [random.randint(10,100) for i in range(5)]
+    for i in sample_nodes:
+        sample_tree = bst.insert_node(sample_tree, i)
+    print sample_tree
 

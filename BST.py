@@ -18,6 +18,19 @@ class Leaf(object):
         self.left = None
         self.right = None
 
+def option_getter(command):
+    def option(tree):
+        while True:
+            try:
+                value = int(raw_input('Enter value > '))
+                _leaf = Leaf(value)
+                leaf = deepcopy(_leaf)
+                return command(tree, leaf) 
+            except ValueError:
+                print "Enter a number"
+    return option
+
+@option_getter
 def insert(tree, leaf):
     parent = None
     _tree = tree
@@ -36,6 +49,7 @@ def insert(tree, leaf):
         tree = leaf
     return tree              
  
+@option_getter
 def delete(tree, leaf):
     if not leaf.left:
        tree = transplant(tree, leaf, leaf.right)
@@ -64,6 +78,7 @@ def transplant(tree, leaf, branch):
         branch.parent = leaf.parent
     return tree
 
+@option_getter
 def search(tree, leaf):
     if not tree:
         print "Value <%d> not in tree!" % leaf.value
@@ -109,36 +124,20 @@ def tree_min(tree):
         tree = tree.left
     return tree
 
-def return_selection():
-    leaf = None
-    while True:
-        try:
-            option = int(raw_input('Enter number of option > '))
-            if option == 5:
-                return option, leaf
-            elif option != 4:
-                value = int(raw_input('Enter value > '))
-                _leaf = Leaf(value)
-                leaf = deepcopy(_leaf)
-            break
-        except ValueError:
-            print "Enter a number"
-    return option, leaf
-
 
 if __name__ == '__main__':
     tree = None
     while True:
         print "Select option: [1=insert, 2=delete, 3=search, 4=tree_walk, 5=exit]"
-        option, leaf = return_selection()
-        if option == 1:
-            tree = insert(tree, leaf)
-        elif option == 2:
-            tree = delete(tree, leaf)
-        elif option == 3:
-            search(tree, leaf)
-        elif option == 4:    
-            tree_walk(tree)
+        option = raw_input('Enter number of option > ')
+        if option == '1':
+            tree = insert(tree)
+        elif option == '2':
+            tree = delete(tree)
+        elif option == '3':
+            search(tree)
+        elif option == '4':
+            tree_walk(tree)    
         else:
             break
 

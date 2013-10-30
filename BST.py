@@ -1,77 +1,115 @@
-""" An implementation of a complete binary search tree. The 'complete' 
-    part of the this tree comes where each node will always have two
-    children, where one will either be a value and the other None or
-    both will be None.
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+""" 
+An implementation of a complete binary search tree. The 'complete' part of the 
+this tree comes where each node will always have two children, where one will 
+either be a value and the other None or both will be None.
 """
 
-import random
+from copy import deepcopy
 
-class BinarySearchTree(object):
 
-    """ This class method is a recursive generator used in collaboration with 
-        delete_node.  The 'picker' is that this method will pick up the 
-        remaining branches off the node being deleted for re-insertion
-        into the edited tree. 
-    """
+class Leaf(object):
 
-    def tree_picker(self, tree):
-        for i in tree:
-            if isinstance(i, int): 
-                yield i
-            if isinstance(i, list):
-                for j in self.tree_picker(i):
-                    yield j
+    def __init__(self, value):
+        self.value = value
+        self.parent = None
+        self.left = None
+        self.right = None
 
-    def insert_node(self, tree, node):
-        if len(tree) == 0 or tree[0] == None:
-            if len(tree) == 0:
-                tree.extend((node, [None], [None]))
-            else:
-                tree[0] = node
-                tree.extend(([None], [None]))
-        if node > tree[0]: 
-            self.insert_node(tree[2], node)
-        if node < tree[0]:
-            self.insert_node(tree[1], node)
-        return tree
+def insert(tree, leaf):
+    parent = None
+    _tree = tree
+    while _tree:
+        parent = _tree
+        if leaf.value < _tree.value:
+            _tree = _tree.left
+        else:
+            _tree = _tree.right
+    leaf.parent = parent
+    if parent and leaf.value < parent.value:
+        parent.left = leaf
+    elif parent and leaf.value >= parent.value:
+        parent.right = leaf
+    return tree              
+ 
+def delete(tree):
+    pass
 
-    def retrieve_node(self, tree, node, count=0):
-        if tree[0] == node:
-            print '%s is at depth %d' % (node, count)
-        if node < tree[0]:
-            count += 1
-            self.retrieve_node(tree[1], node, count)
-        if node > tree[0] and tree[0] != None:
-            count += 1
-            self.retrieve_node(tree[2], node, count)
+def search(tree, value):
+    if tree.value == value:
+        print "Value <%d> is in tree!" % value
+        return
+    if not tree:
+        print "Value <%d> not in tree!" % value
+    elif tree.value < value:
+        search(tree.right, value)
+    else:   
+        search(tree.left, value)
+    
+def tree_walk(tree):
+    if tree:
+        tree_walk(tree.left)
+        print tree.value
+        tree_walk(tree.right)
 
-    def delete_node(self, tree, node, count=0, orig=None, new=None):
-        if orig == None:
-            orig = [i for i in self.tree_picker(tree)]
-        if new == None:
-            new = tree[:]
-        new_tree = []
-        if node == tree[0]:
-            print '%s at depth %d was deleted' % (node, count)
-            for v in self.tree_picker(orig):
-                if v != node:
-                    new_tree = self.insert_node(new_tree, v)
-            print 'New Tree ... %s' % new_tree
-        if node < tree[0]:
-            count += 1
-            self.delete_node(tree[1], node, count, orig, new)
-        if node > tree[0] and tree[0] != None:
-            count += 1
-            self.delete_node(tree[2], node, count, orig, new)
-        if new_tree:
-            return new_tree
-        return new
+def tree_predecessor(tree):
+    if tree.left:
+        return tree_max(tree.left)
+    parent = tree.parent
+    while parent and tree == parent.left:
+        tree = parent
+        parent = parent.parent
+    return parent.value
+
+def tree_successor(tree):
+    if tree.right:
+        return tree_min(tree.right)
+    parent = tree.parent
+    while parent and tree == parent.right:
+        tree = parent
+        parent = parent.parent
+    return parent.value
+
+def tree_max(tree):
+    while tree.right:
+        tree = tree.right
+    return tree.value
+
+def tree_min(tree):
+    while tree.left:
+        tree = tree.left
+    return tree.value
+
+def return_selection():
+    while True:
+        try:
+            option = int(raw_input('> '))
+            return option 
+        except ValueError:
+            print "Enter a number"
+
 
 
 if __name__ == '__main__':
-    sample_tree = []
-    bst = BinarySearchTree()
-    sample_nodes = [random.randint(10,100) for i in range(5)]
-    for i in sample_nodes:
-        sample_tree = bst.insert_node(sample_tree, i)
-    print sample_tree
+    options = {1:insert, 2:delete, 3:search, 4:tree_walk}
+    tree = None
+    while True:
+        print "Select option: [1=insert, 2=delete, 3=search, 4=tree_walk, 5=exit]"
+        option = return_selection()
+        tree_action = options.get(option)
+        if tree_action:
+            if option == 1:
+                value = return_selection() 
+                _leaf = Leaf(value)
+                leaf = deepcopy(_leaf)
+                tree = tree_action(tree, leaf)
+            elif option == 3:
+                value = return_selection()
+                tree_action(tree, value)
+            else:    
+                tree_action(tree)
+        else:
+            break
+

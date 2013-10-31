@@ -82,13 +82,20 @@ def transplant(tree, leaf, branch):
 def search(tree, leaf):
     if not tree:
         print "Value <%d> not in tree!" % leaf.value
+        return
     elif tree.value == leaf.value:
         print "Value <%d> is in tree!" % leaf.value
         return
-    elif tree.value < leaf.value:
-        search(tree.right, leaf)
-    else:   
-        search(tree.left, leaf)
+    while tree:
+        if tree.value == leaf.value:
+            print "Value <%d> is in tree!" % leaf.value
+            return
+        elif tree.value < leaf.value:
+            tree = tree.right
+        else:
+            tree = tree.left
+    print "Value <%d> is not in tree!" % leaf.value
+    return    
     
 def tree_walk(tree):
     if tree:

@@ -51,13 +51,16 @@ def insert(tree, leaf):
  
 @option_getter
 def delete(tree, leaf):
+    leaf = match_leaf(tree, leaf)
+    if not leaf:
+        return tree    
     if not leaf.left:
-       tree = transplant(tree, leaf, leaf.right)
+        tree = transplant(tree, leaf, leaf.right)
     elif not leaf.right:
-       tree = transplant(tree, leaf, leaf.left)
+        tree = transplant(tree, leaf, leaf.left)
     else:
         _branch = tree_min(leaf.right)
-        if not _branch.parent:
+        if _branch.parent != leaf:
             tree = transplant(tree, _branch, _branch.right)
             _branch.right = leaf.right
             _branch.right.parent = _branch
@@ -67,9 +70,8 @@ def delete(tree, leaf):
     return tree
 
 def transplant(tree, leaf, branch):
-    _tree = tree
     if not leaf.parent:
-        _tree = branch
+        tree = branch
     elif leaf == leaf.parent.left:
         leaf.parent.left = branch
     else:
@@ -78,6 +80,20 @@ def transplant(tree, leaf, branch):
         branch.parent = leaf.parent
     return tree
 
+def match_leaf(tree, leaf):
+    if not tree:
+        return 
+    elif leaf.value == tree.value:
+        return tree
+    while tree:
+        if leaf.value == tree.value:
+            return tree
+        elif leaf.value > tree.value:
+            tree = tree.right
+        else:
+            tree = tree.left
+    return tree 
+   
 @option_getter
 def search(tree, leaf):
     if not tree:
@@ -147,4 +163,3 @@ if __name__ == '__main__':
             tree_walk(tree)    
         else:
             break
-

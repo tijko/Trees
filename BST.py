@@ -60,9 +60,9 @@ def delete(tree, leaf):
         tree = transplant(tree, leaf, leaf.left)
     else:
         _branch = tree_min(leaf.right)
-        if _branch.parent != leaf:
-            tree = transplant(tree, _branch, _branch.right)
-            _branch.right = leaf.right
+        if _branch.parent != leaf:  #check if branch is child of deleted leaf
+            tree = transplant(tree, _branch, _branch.right) #trans branch.rg ;) 
+            _branch.right = leaf.right 
             _branch.right.parent = _branch
         tree = transplant(tree, leaf, _branch)
         _branch.left = leaf.left

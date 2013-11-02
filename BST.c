@@ -53,10 +53,10 @@ void search(struct leaf *tree, int value) {
         }
     }
     else if (tree && tree->value == value) {
-        printf ("Value %d is in tree!\n");
+        printf ("Value %d is in tree!\n", tree->value);
     }
     else {
-        printf ("Value %d is not in tree!\n");
+        printf ("Value %d is not in tree!\n", tree->value);
     }
 }
 

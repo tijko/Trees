@@ -12,33 +12,47 @@ struct leaf {
     int value;
 };
 
+struct leaf *create_leaf(void) {
+
+    struct leaf *fresh_leaf = malloc ( sizeof *fresh_leaf );
+    fresh_leaf->parent = NULL;
+    fresh_leaf->left = NULL;
+    fresh_leaf->right = NULL;
+    return fresh_leaf;
+}
+
 void delete(struct leaf **tree, int value) {
 }
 
 void insert(struct leaf **tree, int value) {
 
-    if (!(*tree)) {
+    if ((*tree)->value < value) {
+        if (!((*tree)->right)) {
 
-        struct leaf *new_leaf = malloc ( sizeof *new_leaf );
-        new_leaf->left = NULL;
-        new_leaf->right = NULL;
-        new_leaf->parent = *tree;
-        new_leaf->value = value;
+            struct leaf *new_leaf = create_leaf();
+            new_leaf->parent = *tree;
+            new_leaf->value = value;
 
-        if ((*tree)->value < value) {
             (*tree)->right = new_leaf;
+        }
+        else {
+            insert(&(*tree)->right, value);
+        }
+    }
+
+    else if ((*tree)->value >= value) {
+        if (!((*tree)->left)) {
+
+            struct leaf *new_leaf = create_leaf();
+            new_leaf->parent = *tree;
+            new_leaf->value = value;
+
+            (*tree)->left = new_leaf;
         }
 
         else {
-            (*tree)->left = new_leaf;
+            insert(&(*tree)->left, value);
         }
-    }
-    else if ((*tree)->value < value) {
-        insert(&(*tree)->right, value);
-    }
-
-    else {
-        insert(&(*tree)->left, value);
     }           
 }
 
@@ -70,15 +84,6 @@ void dump_tree(struct leaf *tree) {
     }
 }
 
-struct leaf *create_root(void) {
-
-    struct leaf *root = malloc ( sizeof *root );
-    root->parent = NULL;
-    root->left = NULL;
-    root->right = NULL;
-    return root;
-}
-
 struct leaf **min_tree(struct leaf **tree) {
 
     if ((*tree)->left) {
@@ -107,7 +112,7 @@ int tree_choice(void) {
                 printf ("Enter value: ");
                 scanf ("%d", &value);
                 if (!(tree)) {
-                    tree = create_root(); 
+                    tree = create_leaf(); 
                     tree->value = value;
                 }
                 else {

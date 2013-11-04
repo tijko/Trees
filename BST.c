@@ -35,8 +35,11 @@ struct leaf *min_tree(struct leaf **tree) {
 void transplant(struct leaf **rm_branch, struct leaf **branch) {
 
     if ((!(*rm_branch)->parent)) {
-        *rm_branch = *branch;
-    }
+        (*branch)->parent = NULL;
+        (*branch)->left = (*rm_branch)->left;
+        (*branch)->left->parent = *branch;
+        *rm_branch = *branch; 
+    }                         
 
     else if (*rm_branch == (*rm_branch)->parent->left) {
         (*rm_branch)->parent->left = *branch;
@@ -46,9 +49,9 @@ void transplant(struct leaf **rm_branch, struct leaf **branch) {
         (*rm_branch)->parent->right = *branch;
     }
 
-    if (*branch) {
-        (*branch)->parent = (*rm_branch)->parent;
-    }
+    if (*branch) { 
+        (*branch)->parent = (*rm_branch)->parent;  
+    }                                             
 }
 
 void delete(struct leaf **tree, int value) {
@@ -73,14 +76,14 @@ void delete(struct leaf **tree, int value) {
             _branch = min_tree(&(*tree)->right);
 
             if (_branch->parent != *tree) { 
-                transplant(&_branch, &(_branch)->right); 
-                _branch->right = (*tree)->right; 
-                _branch->right->parent = _branch; 
+                transplant(&_branch, &(_branch)->right);   
+                _branch->right = (*tree)->right;          
+                _branch->right->parent = _branch;        
             }
 
             transplant(&(*tree), &_branch); 
-            _branch->left = (*tree)->left; 
-            _branch->parent->left = _branch; 
+            _branch->left = (*tree)->left;     
+            _branch->left->parent = _branch;  
         }
     }
 

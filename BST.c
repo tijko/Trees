@@ -62,7 +62,12 @@ void delete(struct leaf **tree, int value) {
 
     else if ((*tree)->value == value) {
 
-        if ((!(*tree)->left)) {          
+        if ((!(*tree)->left) && (!(*tree)->right) && (!(*tree)->parent)) {
+            free (*tree);
+            *tree = NULL;
+        }
+
+        else if ((!(*tree)->left)) {          
             transplant(&(*tree), &(*tree)->right);
         }
 

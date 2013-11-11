@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include "BST_actions.h"
+#include "lib/BST_actions.h"
 
 
 int main(void) {

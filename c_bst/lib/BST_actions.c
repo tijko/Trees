@@ -18,9 +18,7 @@ struct leaf *min_tree(struct leaf **tree) {
         min_tree(&(*tree)->left);
     }
 
-    else {
-        return *tree; 
-    }
+    return *tree; 
 }
 
 void transplant(struct leaf **rm_branch, struct leaf **branch) {
@@ -59,11 +57,11 @@ void delete(struct leaf **tree, int value) {
         }
 
         else if ((!(*tree)->left)) {          
-            transplant(&(*tree), &(*tree)->right);
+            transplant(tree, &(*tree)->right); // &(*tree)
         }
 
         else if ((!(*tree)->right)) {
-            transplant(&(*tree), &(*tree)->left); 
+            transplant(tree, &(*tree)->left); // &(*tree)
         }
 
         else {
@@ -145,7 +143,7 @@ void search(struct leaf *tree, int value) {
     }
 
     else {
-        printf ("Value %d is not in tree!\n", tree->value);
+        printf ("Value %d is not in tree!\n", value);
     }
 }
 

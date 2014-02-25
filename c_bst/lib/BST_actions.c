@@ -57,11 +57,11 @@ void delete(struct leaf **tree, int value) {
         }
 
         else if ((!(*tree)->left)) {          
-            transplant(tree, &(*tree)->right); // &(*tree)
+            transplant(tree, &(*tree)->right); 
         }
 
         else if ((!(*tree)->right)) {
-            transplant(tree, &(*tree)->left); // &(*tree)
+            transplant(tree, &(*tree)->left); 
         }
 
         else {

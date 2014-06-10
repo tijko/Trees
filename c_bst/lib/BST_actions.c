@@ -24,7 +24,9 @@ void transplant(struct leaf **rm_branch, struct leaf **branch) {
 
     if ((!(*rm_branch)->parent)) {
         (*branch)->parent = NULL;
-        (*branch)->left = (*rm_branch)->left;
+        if ((*rm_branch)->left != (*branch)) {        
+            (*branch)->left = (*rm_branch)->left;
+        }
         if ((*branch)->left) {
             (*branch)->left->parent = *branch;
         }
@@ -153,7 +155,6 @@ void search(struct leaf *tree, long value) {
 void dump_tree(struct leaf *tree) {
 
     if (tree) {
-
         dump_tree(tree->left);
         printf ("Leaf: %ld\n", tree->value);
         dump_tree(tree->right);

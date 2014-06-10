@@ -5,7 +5,7 @@
 
 struct leaf *create_leaf(void) {
 
-    struct leaf *fresh_leaf = malloc ( sizeof *fresh_leaf );
+    struct leaf *fresh_leaf = malloc(sizeof *fresh_leaf);
     fresh_leaf->parent = NULL;
     fresh_leaf->left = NULL;
     fresh_leaf->right = NULL;
@@ -68,13 +68,15 @@ void delete(struct leaf **tree, long value) {
 
         else {
 
-            struct leaf *_branch = malloc ( sizeof *_branch ); 
+            struct leaf *_branch = malloc(sizeof *_branch); 
             _branch = min_tree(&(*tree)->right);
 
             if (_branch->parent != *tree) { 
                 transplant(&_branch, &(_branch)->right);   
                 _branch->right = (*tree)->right;          
-                _branch->right->parent = _branch;        
+                if (_branch->right) {
+                    _branch->right->parent = _branch;
+                }
             }
 
             transplant(&(*tree), &_branch); 
@@ -158,4 +160,3 @@ void dump_tree(struct leaf *tree) {
         dump_tree(tree->right);
     }
 }
-

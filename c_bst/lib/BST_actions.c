@@ -14,9 +14,8 @@ struct leaf *create_leaf(void) {
 
 struct leaf *min_tree(struct leaf **tree) { 
 
-    if ((*tree)->left) {
+    if ((*tree)->left) 
         min_tree(&(*tree)->left);
-    }
 
     return *tree; 
 }

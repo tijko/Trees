@@ -43,10 +43,10 @@ void transplant(struct leaf **rm_branch, struct leaf **branch) {
     }                                             
 }
 
-void delete(struct leaf **tree, int value) {
+void delete(struct leaf **tree, long value) {
 
     if (!(*tree)) {
-        printf ("Value %d not in tree!\n", value);
+        printf ("Value %ld not in tree!\n", value);
     }
 
     else if ((*tree)->value == value) {
@@ -90,7 +90,7 @@ void delete(struct leaf **tree, int value) {
     }
 }
 
-void insert(struct leaf **tree, int value) {
+void insert(struct leaf **tree, long value) {
 
     if ((*tree)->value < value) {
 
@@ -125,7 +125,7 @@ void insert(struct leaf **tree, int value) {
     }           
 }
 
-void search(struct leaf *tree, int value) {
+void search(struct leaf *tree, long value) {
 
     if (tree && tree->value != value) {
 
@@ -139,11 +139,11 @@ void search(struct leaf *tree, int value) {
     }
 
     else if (tree && tree->value == value) {
-        printf ("Value %d is in tree!\n", tree->value);
+        printf ("Value %ld is in tree!\n", tree->value);
     }
 
     else {
-        printf ("Value %d is not in tree!\n", value);
+        printf ("Value %ld is not in tree!\n", value);
     }
 }
 
@@ -152,7 +152,7 @@ void dump_tree(struct leaf *tree) {
     if (tree) {
 
         dump_tree(tree->left);
-        printf ("Leaf: %d\n", tree->value);
+        printf ("Leaf: %ld\n", tree->value);
         dump_tree(tree->right);
     }
 }

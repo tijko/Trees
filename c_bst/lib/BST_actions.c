@@ -26,7 +26,9 @@ void transplant(struct leaf **rm_branch, struct leaf **branch) {
     if ((!(*rm_branch)->parent)) {
         (*branch)->parent = NULL;
         (*branch)->left = (*rm_branch)->left;
-        (*branch)->left->parent = *branch;
+        if ((*branch)->left) {
+            (*branch)->left->parent = *branch;
+        }
         *rm_branch = *branch; 
     }                         
 

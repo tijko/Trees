@@ -14,10 +14,10 @@ struct leaf *create_leaf(void) {
 
 struct leaf *min_tree(struct leaf **tree) { 
 
-    if ((*tree)->left) 
-        min_tree(&(*tree)->left);
-
-    return *tree; 
+    if (!((*tree)->left)) {
+        return *tree;
+    }
+    return min_tree(&(*tree)->left);
 }
 
 void transplant(struct leaf **rm_branch, struct leaf **branch) {
@@ -151,8 +151,14 @@ void search(struct leaf *tree, long value) {
 void dump_tree(struct leaf *tree) {
 
     if (tree) {
+        if (tree->left) {
+            printf("Left: %ld\n", tree->left->value);
+        }
         dump_tree(tree->left);
         printf ("Leaf: %ld\n", tree->value);
+        if (tree->right) {
+            printf("Right: %ld\n", tree->right->value);
+        }
         dump_tree(tree->right);
     }
 }

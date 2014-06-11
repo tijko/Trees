@@ -38,13 +38,12 @@ void transplant(struct leaf **rm_branch, struct leaf **branch) {
     }
 
     else {
+        if ((*rm_branch)->left) {
+            (*rm_branch)->left->parent = *branch;
+            (*branch)->left = (*rm_branch)->left;
+        }
         (*rm_branch)->parent->right = *branch;
         (*branch)->parent = (*rm_branch)->parent;
-        (*branch)->left = (*rm_branch)->left;
-        if ((*branch)->left) {
-            (*branch)->left->parent = *branch;
-        }
-        *rm_branch = *branch;
     }
 }
 
@@ -154,10 +153,6 @@ void dump_tree(struct leaf *tree) {
     if (tree) {
         dump_tree(tree->left);
         printf ("Leaf: %ld\n", tree->value);
-        if (tree->left)
-            printf("left: %ld\n", tree->left->value);
-        if (tree->right)
-            printf("right: %ld\n", tree->right->value);
         dump_tree(tree->right);
     }
 }

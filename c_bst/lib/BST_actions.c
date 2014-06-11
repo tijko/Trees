@@ -39,11 +39,13 @@ void transplant(struct leaf **rm_branch, struct leaf **branch) {
 
     else {
         (*rm_branch)->parent->right = *branch;
+        (*branch)->parent = (*rm_branch)->parent;
+        (*branch)->left = (*rm_branch)->left;
+        if ((*branch)->left) {
+            (*branch)->left->parent = *branch;
+        }
+        *rm_branch = *branch;
     }
-
-    if (*branch) { 
-        (*branch)->parent = (*rm_branch)->parent;  
-    }                                             
 }
 
 void delete(struct leaf **tree, long value) {
@@ -68,10 +70,8 @@ void delete(struct leaf **tree, long value) {
         }
 
         else {
-
             struct leaf *_branch = malloc(sizeof *_branch); 
             _branch = min_tree(&(*tree)->right);
-
             if (_branch->parent != *tree) { 
                 transplant(&_branch, &(_branch)->right);   
                 _branch->right = (*tree)->right;          
@@ -79,10 +79,7 @@ void delete(struct leaf **tree, long value) {
                     _branch->right->parent = _branch;
                 }
             }
-
             transplant(&(*tree), &_branch); 
-            _branch->left = (*tree)->left;     
-            _branch->left->parent = _branch;  
         }
     }
 
@@ -157,6 +154,10 @@ void dump_tree(struct leaf *tree) {
     if (tree) {
         dump_tree(tree->left);
         printf ("Leaf: %ld\n", tree->value);
+        if (tree->left)
+            printf("left: %ld\n", tree->left->value);
+        if (tree->right)
+            printf("right: %ld\n", tree->right->value);
         dump_tree(tree->right);
     }
 }

@@ -22,28 +22,18 @@ struct leaf *min_tree(struct leaf **tree) {
 
 void transplant(struct leaf **rm_branch, struct leaf **branch) {
 
-    if ((!(*rm_branch)->parent)) {
+    if ((!(*rm_branch)->parent)) { 
         (*branch)->parent = NULL;
-        if ((*rm_branch)->left != (*branch)) {        
-            (*branch)->left = (*rm_branch)->left;
-        }
-        if ((*branch)->left) {
-            (*branch)->left->parent = *branch;
-        }
         *rm_branch = *branch; 
-    }                         
-
-    else if (*rm_branch == (*rm_branch)->parent->left) {
+    } else if (*rm_branch == (*rm_branch)->parent->left) {
         (*rm_branch)->parent->left = *branch;
-    }
-
-    else {
+    } else {
         if ((*rm_branch)->left) {
             (*rm_branch)->left->parent = *branch;
             (*branch)->left = (*rm_branch)->left;
         }
-        (*rm_branch)->parent->right = *branch;
         (*branch)->parent = (*rm_branch)->parent;
+        (*rm_branch)->parent->right = *branch;
     }
 }
 
@@ -51,24 +41,22 @@ void delete(struct leaf **tree, long value) {
 
     if (!(*tree)) {
         printf ("Value %ld not in tree!\n", value);
-    }
-
-    else if ((*tree)->value == value) {
+    } else if ((*tree)->value == value) {
 
         if ((!(*tree)->left) && (!(*tree)->right) && (!(*tree)->parent)) {
             free (*tree);
             *tree = NULL;
-        }
-
-        else if ((!(*tree)->left)) {          
+        } else if (!(*tree)->left && !(*tree)->right) {          
+            if ((*tree)->value == (*tree)->parent->left->value) {
+                (*tree)->parent->left = NULL;
+            } else {
+                (*tree)->parent->right = NULL;
+            }
+        } else if (!(*tree)->left) {
             transplant(tree, &(*tree)->right); 
-        }
-
-        else if ((!(*tree)->right)) {
+        } else if ((!(*tree)->right)) {
             transplant(tree, &(*tree)->left); 
-        }
-
-        else {
+        } else {
             struct leaf *_branch = malloc(sizeof *_branch); 
             _branch = min_tree(&(*tree)->right);
             if (_branch->parent != *tree) { 
@@ -80,13 +68,9 @@ void delete(struct leaf **tree, long value) {
             }
             transplant(&(*tree), &_branch); 
         }
-    }
-
-    else if ((*tree)->value < value) {
+    } else if ((*tree)->value < value) {
         delete(&(*tree)->right, value);
-    }
-
-    else {
+    } else {
         delete(&(*tree)->left, value);
     }
 }
@@ -102,14 +86,10 @@ void insert(struct leaf **tree, long value) {
             new_leaf->value = value;
 
             (*tree)->right = new_leaf;
-        }
-
-        else {
+        } else {
             insert(&(*tree)->right, value);
         }
-    }
-
-    else if ((*tree)->value >= value) {
+    } else if ((*tree)->value >= value) {
 
         if (!((*tree)->left)) {
 
@@ -118,9 +98,7 @@ void insert(struct leaf **tree, long value) {
             new_leaf->value = value;
 
             (*tree)->left = new_leaf;
-        }
-
-        else {
+        } else {
             insert(&(*tree)->left, value);
         }
     }           
@@ -132,18 +110,12 @@ void search(struct leaf *tree, long value) {
 
         if (tree->value < value) {
             search(tree->right, value);
-        }
-
-        else {
+        } else {
             search(tree->left, value);
         }
-    }
-
-    else if (tree && tree->value == value) {
+    } else if (tree && tree->value == value) {
         printf ("Value %ld is in tree!\n", tree->value);
-    }
-
-    else {
+    } else {
         printf ("Value %ld is not in tree!\n", value);
     }
 }
@@ -151,14 +123,14 @@ void search(struct leaf *tree, long value) {
 void dump_tree(struct leaf *tree) {
 
     if (tree) {
-        if (tree->left) {
-            printf("Left: %ld\n", tree->left->value);
+        if (tree->left && tree->right) {
+            printf("Node: %ld - Left: %ld Right: %ld\n", tree->value, tree->left->value, tree->right->value);
+        } else if (tree->left && !(tree->right)) {
+            printf("Node: %ld - Left: %ld Right: <Null>\n", tree->value, tree->left->value);
+        } else if (tree->right && !(tree->left)) {
+            printf("Node: %ld - Left: <Null> Right: %ld\n", tree->value, tree->right->value);
         }
         dump_tree(tree->left);
-        printf ("Leaf: %ld\n", tree->value);
-        if (tree->right) {
-            printf("Right: %ld\n", tree->right->value);
-        }
         dump_tree(tree->right);
     }
 }

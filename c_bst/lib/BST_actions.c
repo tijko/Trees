@@ -23,6 +23,10 @@ struct leaf *min_tree(struct leaf **tree) {
 void transplant(struct leaf **rm_branch, struct leaf **branch) {
 
     if ((!(*rm_branch)->parent)) { 
+        if ((*rm_branch)->left) {
+            (*rm_branch)->left->parent = *branch;
+            (*branch)->left = (*rm_branch)->left;
+        }
         (*branch)->parent = NULL;
         *rm_branch = *branch; 
     } else if (*rm_branch == (*rm_branch)->parent->left) {

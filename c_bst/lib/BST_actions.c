@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include "BST_actions.h"
 
@@ -35,7 +36,7 @@ void transplant(struct leaf **rm_branch, struct leaf **branch) {
         (*rm_branch)->parent->left = *branch;
 
     } else {
-        if ((*rm_branch)->left) {
+        if ((*rm_branch)->left && (*rm_branch)->left != *branch) {
             (*rm_branch)->left->parent = *branch;
             (*branch)->left = (*rm_branch)->left;
         }
@@ -155,6 +156,7 @@ void dump_tree(struct leaf *tree) {
         } else if (tree->right && !(tree->left)) {
             printf("Node: %ld - Left: <Null> Right: %ld\n", tree->value, tree->right->value);
         }
+        //sleep(3);
         dump_tree(tree->left);
         dump_tree(tree->right);
     }

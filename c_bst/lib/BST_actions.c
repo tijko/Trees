@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include "BST_actions.h"
 
@@ -23,8 +22,7 @@ struct leaf *min_tree(struct leaf **tree) {
 
 void transplant(struct leaf **rm_branch, struct leaf **branch) {
 
-    if ((!(*rm_branch)->parent)) { 
-
+    if (!(*rm_branch)->parent) { 
         if ((*rm_branch)->left) {
             (*rm_branch)->left->parent = *branch;
             (*branch)->left = (*rm_branch)->left;
@@ -34,7 +32,8 @@ void transplant(struct leaf **rm_branch, struct leaf **branch) {
 
     } else if (*rm_branch == (*rm_branch)->parent->left) {
         (*rm_branch)->parent->left = *branch;
-
+        (*branch)->parent = (*rm_branch)->parent;
+        (*branch)->parent->left = *branch;
     } else {
         if ((*rm_branch)->left && (*rm_branch)->left != *branch) {
             (*rm_branch)->left->parent = *branch;
@@ -75,9 +74,12 @@ void delete(struct leaf **tree, long value) {
             _branch = min_tree(&(*tree)->right);
 
             if (_branch->parent != *tree) { 
-                transplant(&_branch, &(_branch)->right);   
+                _branch->parent->left = NULL;
+                if (_branch->right) {
+                    transplant(&_branch, &(_branch)->right);   
+                }
+                (*tree)->right->parent = NULL;
                 _branch->right = (*tree)->right;          
-
                 if (_branch->right) {
                     _branch->right->parent = _branch;
                 }
@@ -156,7 +158,6 @@ void dump_tree(struct leaf *tree) {
         } else if (tree->right && !(tree->left)) {
             printf("Node: %ld - Left: <Null> Right: %ld\n", tree->value, tree->right->value);
         }
-        //sleep(3);
         dump_tree(tree->left);
         dump_tree(tree->right);
     }

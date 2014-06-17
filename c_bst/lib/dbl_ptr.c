@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "BST_actions.h"
+#include "dbl_ptr.h"
 
 
 struct leaf *create_leaf(void) {
@@ -156,6 +156,8 @@ void dump_tree(struct leaf *tree) {
 
         } else if (tree->right && !(tree->left)) {
             printf("Node: %ld - Left: <Null> Right: %ld\n", tree->value, tree->right->value);
+        } else if (!tree->left && !tree->right && !tree->parent) {
+            printf("Node: %ld\n", tree->value);
         }
         dump_tree(tree->left);
         dump_tree(tree->right);

@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 #include "lib/BST_actions.h"
 
 
@@ -17,10 +16,10 @@ int main(void) {
 
     printf ("\n -*- Binary Search Tree -*- \n");
 
-    while ( true ) {
+    while (true) {
 
-        printf ("\nPick any of the following choices: [1] insert - [2] delete - [3] search - [4] print tree - [5] exit\n");
-        printf ("Enter choice: ");
+        printf("\nPick any of the following choices: [1] insert - [2] delete - [3] search - [4] print tree - [5] exit\n");
+        printf("Enter choice: ");
 
         input_length = getline(&line, &length, stdin);
         if (input_length != 2) {

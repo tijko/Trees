@@ -1,3 +1,4 @@
+#define true (1 == 1)
 
 struct leaf {
 
@@ -21,4 +22,3 @@ void insert(struct leaf **tree, long value);
 void search(struct leaf *tree, long value);
 
 void dump_tree(struct leaf *tree);
-

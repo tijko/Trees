@@ -34,7 +34,7 @@ int main(void) {
 
                     case (1):
 
-                        printf ("Enter value: ");
+                        printf("Enter value: ");
                         input_length = getline(&line, &length, stdin);
                         value = strtol(line, NULL, 10);
                         if (errno != 0) {
@@ -43,8 +43,7 @@ int main(void) {
                             if (!(tree)) {
                                 tree = create_leaf(); 
                                 tree->value = value;
-                            }    
-                            else {
+                            } else {
                                 insert(&tree, value);
                             }
                         }
@@ -52,7 +51,7 @@ int main(void) {
                     
                     case (2):
 
-                        printf ("Enter value: ");
+                        printf("Enter value: ");
                         input_length = getline(&line, &length, stdin);
                         value = strtol(line, NULL, 10);
                         if (errno != 0) {
@@ -64,7 +63,7 @@ int main(void) {
 
                     case (3):
 
-                        printf ("Enter value: ");
+                        printf("Enter value: ");
                         input_length = getline(&line, &length, stdin);
                         value = strtol(line, NULL, 10);
                         if (errno != 0) {

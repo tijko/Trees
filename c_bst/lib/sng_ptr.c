@@ -21,7 +21,8 @@ Leaf *min_tree(Leaf *tree) {
 
 Leaf *transplant(Leaf *rm_branch, Leaf *branch) {
     if (!rm_branch->parent) {
-        rm_branch->value = branch->value;
+        branch->parent = rm_branch->parent;
+        rm_branch = branch;
     } else if (rm_branch == rm_branch->parent->left) {
         rm_branch->parent->left = branch;
     } else {
@@ -48,20 +49,17 @@ Leaf *remove_leaf(Leaf *tree, long value) {
         return tree;
     } else {
         if (!branch->left) {
-            branch = transplant(branch, branch->right);
+            transplant(branch, branch->right);
         } else if (!branch->right) {
-            branch = transplant(branch, branch->left);
+            transplant(branch, branch->left);
         } else {
             Leaf *splice = min_tree(branch->right);
             if (splice->parent != branch) {
-                // XXX -- if splice right
-                if (splice->right) {
-                    splice = transplant(splice, splice->right);
-                    splice->right = branch->right;
-                    splice->right->parent = splice;
-                } 
+                transplant(splice, splice->right);
+                splice->right = branch->right;
+                splice->right->parent = splice;
             }
-            splice = transplant(branch, splice);
+            transplant(branch, splice);
             splice->left = branch->left;
             splice->left->parent = splice;
         }

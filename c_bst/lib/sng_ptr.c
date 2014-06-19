@@ -47,6 +47,22 @@ Leaf *remove_leaf(Leaf *tree, long value) {
     if (!branch) {
         printf("%ld is NOT in tree!\n", value);
         return tree;
+    } else if (!branch->parent) {
+        if (!branch->left) {
+            tree = branch->right;
+            tree->parent = NULL;
+        } else if (!branch->right) {
+            tree = branch->left;
+            tree->parent = NULL;
+        } else {
+            Leaf *splice = min_tree(branch->right);
+            if (splice->parent->left == splice) {
+                splice->parent->left = NULL;
+            } else {
+                splice->parent->right = NULL;
+            }             
+            tree->value = splice->value;
+        }
     } else {
         if (!branch->left) {
             transplant(branch, branch->right);

@@ -15,7 +15,7 @@ Leaf *create_leaf(void);
 
 Leaf *min_tree(Leaf *tree);
 
-Leaf *transplant(Leaf *rm_branch, Leaf *branch);
+Leaf *transplant(Leaf *tree, Leaf *rm_branch, Leaf *branch);
 
 Leaf *remove_leaf(Leaf *tree, long value);
 

@@ -19,10 +19,11 @@ Leaf *min_tree(Leaf *tree) {
     return min_tree(tree->left);
 }
 
-Leaf *transplant(Leaf *rm_branch, Leaf *branch) {
+Leaf *transplant(Leaf *tree, Leaf *rm_branch, Leaf *branch) {
     if (!rm_branch->parent) {
-        branch->parent = rm_branch->parent;
-        rm_branch = branch;
+        branch->parent = NULL;
+        tree = branch;
+        return tree;
     } else if (rm_branch == rm_branch->parent->left) {
         rm_branch->parent->left = branch;
     } else {
@@ -47,35 +48,19 @@ Leaf *remove_leaf(Leaf *tree, long value) {
     if (!branch) {
         printf("%ld is NOT in tree!\n", value);
         return tree;
-    } else if (!branch->parent) {
-        if (!branch->left) {
-            tree = branch->right;
-            tree->parent = NULL;
-        } else if (!branch->right) {
-            tree = branch->left;
-            tree->parent = NULL;
-        } else {
-            Leaf *splice = min_tree(branch->right);
-            if (splice->parent->left == splice) {
-                splice->parent->left = NULL;
-            } else {
-                splice->parent->right = NULL;
-            }             
-            tree->value = splice->value;
-        }
     } else {
         if (!branch->left) {
-            transplant(branch, branch->right);
+            transplant(tree, branch, branch->right);
         } else if (!branch->right) {
-            transplant(branch, branch->left);
+            transplant(tree, branch, branch->left);
         } else {
             Leaf *splice = min_tree(branch->right);
             if (splice->parent != branch) {
-                transplant(splice, splice->right);
+                transplant(tree, splice, splice->right);
                 splice->right = branch->right;
                 splice->right->parent = splice;
             }
-            transplant(branch, splice);
+            tree = transplant(tree, branch, splice);
             splice->left = branch->left;
             splice->left->parent = splice;
         }

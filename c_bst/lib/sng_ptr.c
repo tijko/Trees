@@ -31,7 +31,7 @@ Leaf *transplant(Leaf *tree, Leaf *rm_branch, Leaf *branch) {
     }
     if (branch)
         branch->parent = rm_branch->parent;
-    return branch;
+    return tree;
 }
 
 Leaf *remove_leaf(Leaf *tree, long value) {

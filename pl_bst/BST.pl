@@ -12,7 +12,7 @@ sub create_branch {
 }
 
 sub bst_menu {
-    my %tree;
+    my $tree;
     while (1) {
         print "Select option: [1=insert, 2=delete, 3=search, 4=tree_walk, 5=exit]\n";
         print "Enter Selection: ";
@@ -20,15 +20,15 @@ sub bst_menu {
         chomp($choice);
         if ($choice == 1) {
             my $value = input_value();
-            %tree = insert(%tree, $value);
+            $tree = insert($tree, $value);
         } elsif ($choice == 2) {
             my $value = input_value();
-            %tree = remove(%tree, $value);
+            $tree = remove($tree, $value);
         } elsif ($choice == 3) {
             my $value = input_value();
-            search(%tree, $value);
+            search($tree, $value);
         } elsif ($choice == 4) {
-            dump_tree(%tree);
+            dump_tree($tree);
         } elsif ($choice == 5) {
             return;
         } else {
@@ -39,54 +39,54 @@ sub bst_menu {
 }
 
 sub insert {
-    my ($value, %tree) = @_;
-    my %parent;
-    my %branch = %tree;
+    my ($value, $tree) = @_;
+    my $parent;
+    my $branch = $tree;
     while (1) {
-        %parent = %branch;
-        if (!$branch{value}) {
-            %branch = create_branch Tree();
-            $branch{value} = $value;
-            $branch{parent} = %parent;
-            if (%parent && $parent{value} >= $value) {
-                $parent{left} = %branch;
-            } elsif (%parent && $parent{value} < $value) {
-                $parent{right} = %branch;
+        $parent = $branch;
+        if (!$branch) {
+            $branch = create_branch Tree();
+            $branch->{value} = $value;
+            $branch->{parent} = $parent;
+            if ($parent && $parent->{value} >= $value) {
+                $parent->{left} = $branch;
+            } elsif ($parent && $parent->{value} < $value) {
+                $parent->{right} = $branch;
             }
             last;
-        } elsif ($branch{value} >= $value) {
-            %branch = $branch{left};
+        } elsif ($branch->{value} >= $value) {
+            $branch = $branch->{left};
         } else {
-            %branch = $branch{right};
+            $branch = $branch->{right};
         }
     }
-    return %tree;
+    return $tree;
 }
 
 sub remove {
-    my ($value, %tree) = @_;
-    return %tree;
+    my ($value, $tree) = @_;
+    return $tree;
 }
 
 sub search {
-    my ($value, %tree) = @_;
-    if (!$tree{value}) {
+    my ($value, $tree) = @_;
+    if (!$tree) {
         print "$value is not in Tree!\n";
-    } elsif ($tree{value} == $value) {
+    } elsif ($tree->{value} == $value) {
         print "Found $value!\n";
-    } elsif ($tree{value} gt $value) {
-        search($tree{left}, $value);
+    } elsif ($tree->{value} gt $value) {
+        search($tree->{left}, $value);
     } else {
-        search($tree{right}, $value);
+        search($tree->{right}, $value);
     }
 }
 
 sub dump_tree {
-    my %tree = @_;
-    if ($tree{value}) {
-        print "$tree{value}\n";
-        dump_tree($tree{left});
-        dump_tree($tree{right});
+    my $tree = @_;
+    if ($tree) {
+        print "$tree->{value}\n";
+        dump_tree($tree->{left});
+        dump_tree($tree->{right});
     }
     return;
 }

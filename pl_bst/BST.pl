@@ -18,18 +18,18 @@ sub bst_menu {
         print "Enter Selection: ";
         my $choice = <>;
         chomp($choice);
-        if ($choice eq 1) {
+        if ($choice == 1) {
             my $value = input_value();
             %tree = insert(%tree, $value);
-        } elsif ($choice eq 2) {
+        } elsif ($choice == 2) {
             my $value = input_value();
             %tree = remove(%tree, $value);
-        } elsif ($choice eq 3) {
+        } elsif ($choice == 3) {
             my $value = input_value();
             search(%tree, $value);
-        } elsif ($choice eq 4) {
+        } elsif ($choice == 4) {
             dump_tree(%tree);
-        } elsif ($choice eq 5) {
+        } elsif ($choice == 5) {
             return;
         } else {
             print "Invalid Selection!\n";
@@ -43,16 +43,20 @@ sub insert {
     my %parent;
     my %branch = %tree;
     while (1) {
+        %parent = %branch;
         if (!$branch{value}) {
             %branch = create_branch Tree();
             $branch{value} = $value;
             $branch{parent} = %parent;
+            if (%parent && $parent{value} >= $value) {
+                $parent{left} = %branch;
+            } elsif (%parent && $parent{value} < $value) {
+                $parent{right} = %branch;
+            }
             last;
-        } elsif ($branch{value} ge $value) {
-            %parent = %branch;
+        } elsif ($branch{value} >= $value) {
             %branch = $branch{left};
         } else {
-            %parent = %branch;
             %branch = $branch{right};
         }
     }
@@ -68,7 +72,7 @@ sub search {
     my ($value, %tree) = @_;
     if (!$tree{value}) {
         print "$value is not in Tree!\n";
-    } elsif ($tree{value} eq $value) {
+    } elsif ($tree{value} == $value) {
         print "Found $value!\n";
     } elsif ($tree{value} gt $value) {
         search($tree{left}, $value);

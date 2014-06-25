@@ -41,7 +41,7 @@ sub bst_menu {
 
 sub insert {
     my ($tree, $value) = @_;
-    my $parent; #XXX have initialized in tree
+    my $parent; 
     my $branch = $tree;
     while (1) {
         if (!$branch->{value}) {
@@ -57,9 +57,9 @@ sub insert {
             last;
         } elsif ($branch->{value} >= $value) {
             $parent = $branch; 
-            $branch = $$branch{left};
+            $branch = $branch->{left};
         } else {
-            $parent = $branch; #XXX parent is catching the right here...
+            $parent = $branch; 
             $branch = $branch->{right};
         }
     }

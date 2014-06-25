@@ -68,8 +68,8 @@ sub remove {
 }
 
 sub search {
-    my ($value, $tree) = @_;
-    if (!$tree) {
+    my ($tree, $value) = @_;
+    if (!$tree->{value}) {
         print "$value is not in Tree!\n";
     } elsif ($tree->{value} == $value) {
         print "Found $value!\n";
@@ -82,8 +82,10 @@ sub search {
 
 sub dump_tree {
     my ($tree) = @_;
-    if ($tree) {
+    if ($tree->{value}) {
         print "$tree->{value}\n";
+        $tree->{left} = undef;
+        $tree->{right} = undef;
         dump_tree($tree->{left});
         dump_tree($tree->{right});
     }

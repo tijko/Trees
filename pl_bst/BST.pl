@@ -12,7 +12,7 @@ sub create_branch {
 }
 
 sub bst_menu {
-    my $tree;
+    my $tree = create_branch Tree();
     while (1) {
         print "Select option: [1=insert, 2=delete, 3=search, 4=tree_walk, 5=exit]\n";
         print "Enter Selection: ";
@@ -39,13 +39,12 @@ sub bst_menu {
 }
 
 sub insert {
-    my ($value, $tree) = @_;
+    my ($tree, $value) = @_;
     my $parent;
     my $branch = $tree;
     while (1) {
         $parent = $branch;
-        if (!$branch) {
-            $branch = create_branch Tree();
+        if (!$branch->{value}) {
             $branch->{value} = $value;
             $branch->{parent} = $parent;
             if ($parent && $parent->{value} >= $value) {
@@ -54,7 +53,7 @@ sub insert {
                 $parent->{right} = $branch;
             }
             last;
-        } elsif ($branch->{value} >= $value) {
+        } elsif ($branch->{value} && $branch->{value} >= $value) {
             $branch = $branch->{left};
         } else {
             $branch = $branch->{right};
@@ -82,7 +81,7 @@ sub search {
 }
 
 sub dump_tree {
-    my $tree = @_;
+    my ($tree) = @_;
     if ($tree) {
         print "$tree->{value}\n";
         dump_tree($tree->{left});

@@ -13,6 +13,7 @@ sub create_branch {
 
 sub bst_menu {
     my $tree = create_branch Tree();
+    $tree->{parent} = undef;
     while (1) {
         print "Select option: [1=insert, 2=delete, 3=search, 4=tree_walk, 5=exit]\n";
         print "Enter Selection: ";
@@ -20,7 +21,7 @@ sub bst_menu {
         chomp($choice);
         if ($choice == 1) {
             my $value = input_value();
-            $tree = insert($tree, $value);
+            insert($tree, $value);
         } elsif ($choice == 2) {
             my $value = input_value();
             $tree = remove($tree, $value);
@@ -40,22 +41,25 @@ sub bst_menu {
 
 sub insert {
     my ($tree, $value) = @_;
-    my $parent;
+    my $parent; #XXX have initialized in tree
     my $branch = $tree;
     while (1) {
-        $parent = $branch;
         if (!$branch->{value}) {
             $branch->{value} = $value;
             $branch->{parent} = $parent;
+            $branch->{left} = create_branch Tree();
+            $branch->{right} = create_branch Tree();
             if ($parent && $parent->{value} >= $value) {
                 $parent->{left} = $branch;
             } elsif ($parent && $parent->{value} < $value) {
                 $parent->{right} = $branch;
             }
             last;
-        } elsif ($branch->{value} && $branch->{value} >= $value) {
-            $branch = $branch->{left};
+        } elsif ($branch->{value} >= $value) {
+            $parent = $branch; 
+            $branch = $$branch{left};
         } else {
+            $parent = $branch; #XXX parent is catching the right here...
             $branch = $branch->{right};
         }
     }
@@ -84,10 +88,8 @@ sub dump_tree {
     my ($tree) = @_;
     if ($tree->{value}) {
         print "$tree->{value}\n";
-        $tree->{left} = undef;
-        $tree->{right} = undef;
-        dump_tree($tree->{left});
-        dump_tree($tree->{right});
+        dump_tree($$tree{left});
+        dump_tree($$tree{right});
     }
     return;
 }

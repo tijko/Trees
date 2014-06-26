@@ -98,7 +98,6 @@ sub dump_tree {
         } elsif (!$tree->{right}->{value} && !$tree->{left}->{value} && !$tree->{parent}->{value}) {
             print "Node: $tree->{value}\n";
         }
-        #print "$tree->{value}\n";
         dump_tree($$tree{left});
         dump_tree($$tree{right});
     }

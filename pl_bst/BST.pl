@@ -71,6 +71,14 @@ sub remove {
     return $tree;
 }
 
+sub min_tree {
+    my ($tree) = @_;
+    if (!$tree->{left}->{value}) {
+        return $tree;
+    }
+    return min_tree($tree->{left});
+}
+
 sub search {
     my ($tree, $value) = @_;
     if (!$tree->{value}) {

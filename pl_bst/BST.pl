@@ -87,7 +87,18 @@ sub search {
 sub dump_tree {
     my ($tree) = @_;
     if ($tree->{value}) {
-        print "$tree->{value}\n";
+        if ($tree->{left}->{value} && $tree->{right}->{value}) {
+            print "Node: $tree->{value} - Left: $tree->{left}->{value} ";
+            print "Right: $tree->{right}->{value}\n";
+        } elsif ($tree->{left}->{value} && !$tree->{right}->{value}) {
+            print "Node: $tree->{value} - Left: $tree->{left}->{value} ";
+            print "Right: <Null>\n";
+        } elsif ($tree->{right}->{value} && !$tree->{left}->{value}) {
+            print "Node: $tree->{value} - Left: <Null> Right: $tree->{right}->{value}\n";
+        } elsif (!$tree->{right}->{value} && !$tree->{left}->{value} && !$tree->{parent}->{value}) {
+            print "Node: $tree->{value}\n";
+        }
+        #print "$tree->{value}\n";
         dump_tree($$tree{left});
         dump_tree($$tree{right});
     }

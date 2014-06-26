@@ -67,7 +67,54 @@ sub insert {
 }
 
 sub remove {
-    my ($value, $tree) = @_;
+    my ($tree, $value) = @_;
+    my $branch = $tree;
+    while ($branch->{value}) {
+        if ($branch->{value} == $value) {
+            last;
+        } elsif ($branch->{value} >= $value) {
+            $branch = $branch->{left};
+        } else {
+            $branch = $branch->{right};
+        }
+    }
+    if (!$branch->{value}) {
+        print "$value is NOT in tree!\n";
+        return $tree;
+    } else {
+        if (!$branch->{left}->{value}) {
+            transplant($tree, $branch, $branch->{right});
+        } elsif (!$branch->{right}->{value}) {
+            transplant($tree, $branch, $branch->{left});
+        } else {
+            my $splice = min_tree($branch->{right});
+            if ($splice->{parent} != $branch) {
+                transplant($tree, $splice, $splice->{right});
+                $splice->{right} = $branch->{right};
+                $splice->{right}->{parent} = $splice;
+            }
+            $tree = transplant($tree, $branch, $splice);
+            $splice->{left} = $branch->{left};
+            $splice->{left}->{parent} = $splice;
+        }
+    }
+    return $tree;
+}
+
+sub transplant {
+    my ($tree, $rm_branch, $branch) = @_;
+    if (!$rm_branch->{parent}->{value}) {
+        $branch->{parent} = undef;
+        $tree = $branch;
+        return $tree;
+    } elsif ($rm_branch == $rm_branch->{parent}->{left}) {
+        $rm_branch->{parent}->{left} = $branch;
+    } else {
+        $rm_branch->{parent}->{right} = $branch;
+    }
+    if ($branch->{value}) {
+        $branch->{parent} = $rm_branch->{parent};
+    }
     return $tree;
 }
 

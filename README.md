@@ -11,6 +11,6 @@ None.
 
 ####Usage:
 
-You can run the py_version just the same as any .py file.  The c_version you 
-can compile with `gcc -o BST BST.c lib/BST_actions.c` and then run the 
-executable `./BST`.
+You can run the python version just the same as any .py file.  The C version you 
+can compile with `gcc BST.c lib/BST_actions.c -o BST -Wall -g` and then run the 
+executable `./BST`.  The perl version run as any other perl script.

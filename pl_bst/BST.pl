@@ -19,7 +19,9 @@ sub bst_menu {
         print "Enter Selection: ";
         my $choice = <>;
         chomp($choice);
-        if ($choice == 1) {
+        if ($choice =~ /\D/) {
+            print "Invalid Selection!\n";
+        } elsif ($choice == 1) {
             my $value = input_value();
             insert($tree, $value);
         } elsif ($choice == 2) {
@@ -32,8 +34,6 @@ sub bst_menu {
             dump_tree($tree);
         } elsif ($choice == 5) {
             return;
-        } else {
-            print "Invalid Selection!\n";
         }
     }
     return;

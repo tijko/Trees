@@ -7,11 +7,10 @@
 int main(void) {
 
     char *line;
-    int choice;
+    int choice, errno;
     ssize_t input_length;
     size_t length = 0;
     long value;
-    int errno;
     struct leaf *tree = NULL;
 
     printf ("\n -*- Binary Search Tree -*- \n");
@@ -22,61 +21,53 @@ int main(void) {
         printf("Enter choice: ");
 
         input_length = getline(&line, &length, stdin);
-        if (input_length != 2) {
+        if (input_length != 2) 
             printf("Error: invalid choice selection.\n");
-        } else {
+        else {
             choice = line[0] - '0';
-            if (choice < 1 || choice > 5) {
+            if (choice < 1 || choice > 5) 
                 printf("Error: invalid choice selection.\n");
-            } else {
+            else {
                 errno = 0;
                 switch (choice) {
 
                     case (1):
-
                         printf("Enter value: ");
                         input_length = getline(&line, &length, stdin);
                         value = strtol(line, NULL, 10);
-                        if (errno != 0) {
+                        if (errno) 
                             printf("Error: %s\n", strerror(errno));
-                        } else { 
+                        else { 
                             if (!(tree)) {
                                 tree = create_leaf(); 
                                 tree->value = value;
-                            } else {
+                            } else 
                                 insert(&tree, value);
-                            }
                         }
                         break;
                     
                     case (2):
-
                         printf("Enter value: ");
                         input_length = getline(&line, &length, stdin);
                         value = strtol(line, NULL, 10);
-                        if (errno != 0) {
+                        if (errno) 
                             printf("Error: %s\n", strerror(errno));
-                        } else {
+                        else 
                             delete(&tree, value);
-                        }
                         break;
 
                     case (3):
-
                         printf("Enter value: ");
                         input_length = getline(&line, &length, stdin);
                         value = strtol(line, NULL, 10);
-                        if (errno != 0) {
+                        if (errno) 
                             printf("Error: %s\n", strerror(errno));
-                        } else {
+                        else 
                             search(tree, value);
-                        }
                         break;
 
                     case (4):
-
                         dump_tree(tree); 
-
                         break;
 
                     case (5):

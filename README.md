@@ -1,8 +1,7 @@
-Binary-Search-Tree
+Trees
 ==================
 
-A sorted binary tree!
-
+#### Binary-Search
 This is an implementation of a complete binary search tree. 
 
 The 'complete' part of the this tree comes where each node will always have two

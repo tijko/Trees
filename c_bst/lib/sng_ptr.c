@@ -1,11 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
+
 #include "sng_ptr.h"
 
 
 Leaf *create_leaf(void) 
 {
     Leaf *fresh_leaf = malloc(sizeof *fresh_leaf);
+
+    assert(fresh_leaf != NULL);
+
     fresh_leaf->parent = NULL;
     fresh_leaf->left = NULL;
     fresh_leaf->right = NULL;
@@ -14,9 +19,9 @@ Leaf *create_leaf(void)
 
 Leaf *min_tree(Leaf *tree) 
 {
-    if (!tree->left) {
+    if (!tree->left) 
         return tree;
-    }
+
     return min_tree(tree->left);
 }
 

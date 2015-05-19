@@ -3,8 +3,8 @@
 #include "sng_ptr.h"
 
 
-Leaf *create_leaf(void) {
-
+Leaf *create_leaf(void) 
+{
     Leaf *fresh_leaf = malloc(sizeof *fresh_leaf);
     fresh_leaf->parent = NULL;
     fresh_leaf->left = NULL;
@@ -12,14 +12,16 @@ Leaf *create_leaf(void) {
     return fresh_leaf;
 }
 
-Leaf *min_tree(Leaf *tree) {
+Leaf *min_tree(Leaf *tree) 
+{
     if (!tree->left) {
         return tree;
     }
     return min_tree(tree->left);
 }
 
-Leaf *transplant(Leaf *tree, Leaf *rm_branch, Leaf *branch) {
+Leaf *transplant(Leaf *tree, Leaf *rm_branch, Leaf *branch) 
+{
     if (!rm_branch->parent) {
         branch->parent = NULL;
         tree = branch;
@@ -34,7 +36,8 @@ Leaf *transplant(Leaf *tree, Leaf *rm_branch, Leaf *branch) {
     return tree;
 }
 
-Leaf *remove_leaf(Leaf *tree, long value) {
+Leaf *remove_leaf(Leaf *tree, long value) 
+{
     Leaf *branch = tree;
     while (branch) {
         if (branch->value == value) {
@@ -68,7 +71,8 @@ Leaf *remove_leaf(Leaf *tree, long value) {
     return tree;
 }
 
-Leaf *insert(Leaf *tree, long value) {
+Leaf *insert(Leaf *tree, long value) 
+{
     Leaf *fresh_leaf = create_leaf();
     fresh_leaf->value = value;
     Leaf *branch = tree;
@@ -90,7 +94,8 @@ Leaf *insert(Leaf *tree, long value) {
     return tree;
 }
 
-int search(Leaf *tree, long value) {
+int search(Leaf *tree, long value) 
+{
     Leaf *branch = tree;
     while (branch) {
         if (branch->value == value) {
@@ -104,7 +109,8 @@ int search(Leaf *tree, long value) {
     return 0;
 }
 
-void dump_tree(Leaf *tree) {
+void dump_tree(Leaf *tree) 
+{
     if (tree) {
         if (tree->left && tree->right) {
             printf("Node: %ld - Left: %ld Right: %ld\n", tree->value, tree->left->value, tree->right->value);
@@ -119,3 +125,5 @@ void dump_tree(Leaf *tree) {
         dump_tree(tree->right);
     }
 }
+
+void free_tree(Leaf *tree);

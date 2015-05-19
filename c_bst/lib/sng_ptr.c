@@ -140,4 +140,11 @@ void dump_tree(Leaf *tree)
     }
 }
 
-void free_tree(Leaf *tree);
+void free_tree(Leaf *tree)
+{
+    if (tree) {
+        free_tree(tree->left);
+        free_tree(tree->right);
+        free(tree);
+    }
+}

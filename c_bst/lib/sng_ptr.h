@@ -24,3 +24,5 @@ Leaf *insert(Leaf *tree, long value);
 int search(Leaf *tree, long value);
 
 void dump_tree(Leaf *tree);
+
+void free_tree(Leaf *tree);

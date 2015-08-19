@@ -12,13 +12,14 @@ int main(int argc, char *argv[])
     size_t length = 0;
     long value;
     int errno;
-    Leaf *tree = NULL;
+    Tree *tree = malloc(sizeof *tree);
     line = NULL; 
     printf("\n -*- Binary Search Tree -*- \n");
     
     while (true) {
     
-        printf("\nPick any of the following choices: [1] insert - [2] delete - [3] search - [4] print tree - [5] exit\n");
+        printf("\nPick any of the following choices: [1] insert - ");
+        printf("[2] delete - [3] search - [4] print tree - [5] exit\n");
         printf("Enter choice: ");
 
         input_length = getline(&line, &length, stdin);
@@ -33,43 +34,39 @@ int main(int argc, char *argv[])
                 switch (choice) {
                 
                     case (1):
-        
                         printf("Enter value: ");
                         input_length = getline(&line, &length, stdin);
                         value = strtol(line, NULL, 10);
                         if (errno != 0) 
                             printf("Error: %s\n", strerror(errno));
                         else {
-                            if (!(tree)) {
-                                tree = create_leaf();
-                                tree->value = value;
-                                tree->parent = NULL;
-                            } else {
-                                tree = insert(tree, value);
-                            }
+                            if (!(tree->root)) {
+                                tree->root = create_leaf();
+                                tree->root->value = value;
+                                tree->root->parent = NULL;
+                            } else 
+                                insert(tree->root, value);
                         }
                         break;
 
                     case (2):
-            
                         printf("Enter value: ");
                         input_length = getline(&line, &length, stdin);
                         value = strtol(line, NULL, 10);
                         if (errno != 0) 
                             printf("Error: %s\n", strerror(errno));
                         else 
-                            tree = remove_leaf(tree, value);
+                            remove_leaf(tree, value);
                         break;
 
                     case (3):
-            
                         printf("Enter value: ");
                         input_length = getline(&line, &length, stdin);
                         value = strtol(line, NULL, 10);
                         if (errno != 0) 
                             printf("Error: %s\n", strerror(errno));
                         else {
-                            member = search(tree, value);
+                            member = search(tree->root, value);
                             if (member) 
                                 printf("%ld is in the tree!\n", value);
                             else 
@@ -78,16 +75,12 @@ int main(int argc, char *argv[])
                         break;
 
                     case (4):
-            
-                        dump_tree(tree);
-        
+                        dump_tree(tree->root);
                         break;
 
                     case (5):
-
-                        free_tree(tree);
+                        free_tree(tree->root);
                         free(line);
-
                         return 0;
                 }
             }

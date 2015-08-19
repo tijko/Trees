@@ -17,70 +17,68 @@ Leaf *create_leaf(void)
     return fresh_leaf;
 }
 
-Leaf *min_tree(Leaf *tree) 
+Leaf *minimum(Leaf *branch) 
 {
-    if (!tree->left) 
-        return tree;
+    if (!branch->left) 
+        return branch;
 
-    return min_tree(tree->left);
+    return minimum(branch->left);
 }
 
-Leaf *transplant(Leaf *tree, Leaf *rm_branch, Leaf *branch) 
+Leaf *retrieve_branch(Leaf *branch, long value)
 {
-    if (!rm_branch->parent) {
+    if (!branch)
+        return NULL;
+    else if (branch->value == value)
+        return branch;
+    else if (branch->value > value)
+        return retrieve_branch(branch->left, value);
+    return retrieve_branch(branch->right, value);
+}
+
+void transplant(Tree *tree, Leaf *rm_branch, Leaf *branch) 
+{
+    if (!rm_branch->parent) { 
         branch->parent = NULL;
-        tree = branch;
-        return tree;
-    } else if (rm_branch == rm_branch->parent->left) {
-        rm_branch->parent->left = branch;
-    } else {
-        rm_branch->parent->right = branch;
+        tree->root = branch;
+        return;
     }
+
+    if (rm_branch == rm_branch->parent->left)
+        rm_branch->parent->left = branch;
+    else 
+        rm_branch->parent->right = branch;
 
     if (branch)
         branch->parent = rm_branch->parent;
-
-    return tree;
 }
 
-Leaf *remove_leaf(Leaf *tree, long value) 
+void remove_leaf(Tree *tree, long value) 
 {
-    Leaf *branch = tree;
+    Leaf *branch = retrieve_branch(tree->root, value);
 
-    while (branch) {
-        if (branch->value == value) 
-            break;
-        else if (branch->value >= value) 
-            branch = branch->left;
-        else 
-            branch = branch->right;
-    }
-
-    if (!branch) {
+    if (!branch) 
         printf("%ld is NOT in tree!\n", value);
-        return tree;
-    } else {
+    else {
         if (!branch->left) 
             transplant(tree, branch, branch->right);
         else if (!branch->right) 
             transplant(tree, branch, branch->left);
         else {
-            Leaf *splice = min_tree(branch->right);
-            if (splice->parent != branch) {
+            Leaf *splice = minimum(branch->right);
+            if (splice->parent->value != branch->value) {
                 transplant(tree, splice, splice->right);
                 splice->right = branch->right;
                 splice->right->parent = splice;
             }
-            tree = transplant(tree, branch, splice);
+            transplant(tree, branch, splice);
             splice->left = branch->left;
             splice->left->parent = splice;
         }
     }
-
-    return tree;
 }
 
-Leaf *insert(Leaf *tree, long value) 
+void insert(Leaf *tree, long value) 
 {
     Leaf *fresh_leaf = create_leaf();
     fresh_leaf->value = value;
@@ -101,23 +99,12 @@ Leaf *insert(Leaf *tree, long value)
             branch = branch->left;
         }
     }
-
-    return tree;
 }
 
 int search(Leaf *tree, long value) 
 {
-    Leaf *branch = tree;
-
-    while (branch) {
-        if (branch->value == value) 
-            return 1;
-        else if (branch->value >= value) 
-            branch = branch->left;
-        else 
-            branch = branch->right;
-    }
-
+    if (!(retrieve_branch(tree, value)));
+        return 0;
     return 0;
 }
 

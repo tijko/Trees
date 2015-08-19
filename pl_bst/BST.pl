@@ -94,6 +94,7 @@ sub remove {
                 $splice->{right}->{parent} = $splice;
             }
             $tree = transplant($tree, $branch, $splice);
+#            transplant($tree, $branch, $splice);
             $splice->{left} = $branch->{left};
             $splice->{left}->{parent} = $splice;
         }

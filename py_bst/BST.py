@@ -7,8 +7,6 @@ this tree comes where each node will always have two children, where one will
 either be a value and the other None or both will be None.
 """
 
-from copy import deepcopy
-
 
 class Leaf(object):
 
@@ -18,99 +16,93 @@ class Leaf(object):
         self.left = None
         self.right = None
 
-def option_getter(command):
-    def option(tree):
-        while True:
-            try:
-                value = int(raw_input('Enter value > '))
-                _leaf = Leaf(value)
-                leaf = deepcopy(_leaf)
-                return command(tree, leaf) 
-            except ValueError:
-                print "Enter a number"
-    return option
+class Tree(object):
 
-@option_getter
+    def __init__(self):
+        self.root = None
+
+
+def get_value():
+    while True:
+        try:
+            value = int(raw_input('Enter value > '))
+            return value
+        except ValueError:
+            print "Enter a number"
+
+def create_leaf():
+    value = get_value()
+    return Leaf(value)
+
 def insert(tree, leaf):
-    parent = None
-    _tree = tree
-    while _tree:
-        parent = _tree
-        if leaf.value < _tree.value:
-            _tree = _tree.left
+    while tree:
+        if leaf.value < tree.value:
+            if not tree.left:
+                tree.left = leaf
+                leaf.parent = tree
+                return
+            tree = tree.left
         else:
-            _tree = _tree.right
-    leaf.parent = parent
-    if parent and leaf.value < parent.value:
-        parent.left = leaf
-    elif parent and leaf.value >= parent.value:
-        parent.right = leaf
-    else:
-        tree = leaf
-    return tree              
+            if not tree.right:
+                tree.right = leaf
+                leaf.parent = tree
+                return
+            tree = tree.right
  
-@option_getter
-def delete(tree, leaf):
-    leaf = match_leaf(tree, leaf)
+def delete(tree, leaf, value):
+    leaf = match_leaf(leaf, value)
     if not leaf:
-        return tree    
+        print "Value <%d> is not in tree!" % value
+        return
     if not leaf.left:
-        tree = transplant(tree, leaf, leaf.right)
+        transplant(tree, leaf, leaf.right)
     elif not leaf.right:
-        tree = transplant(tree, leaf, leaf.left)
+        transplant(tree, leaf, leaf.left)
     else:
         _branch = tree_min(leaf.right)
         if _branch.parent != leaf:  #check if branch is child of deleted leaf
-            tree = transplant(tree, _branch, _branch.right) #trans branch.rg ;) 
+            transplant(tree, _branch, _branch.right) #trans branch.rg ;) 
             _branch.right = leaf.right 
             _branch.right.parent = _branch
-        tree = transplant(tree, leaf, _branch)
+        transplant(tree, leaf, _branch)
         _branch.left = leaf.left
         _branch.left.parent = _branch
-    return tree
 
 def transplant(tree, leaf, branch):
     if not leaf.parent:
-        tree = branch
+        tree.root = branch
     elif leaf == leaf.parent.left:
         leaf.parent.left = branch
     else:
         leaf.parent.right = branch
     if branch:
         branch.parent = leaf.parent
-    return tree
 
-def match_leaf(tree, leaf):
+def match_leaf(branch, value):
+    if not branch:
+        return branch
+    if branch.value > value:
+        return match_leaf(branch.left, value)
+    elif branch.value < value:
+        return match_leaf(branch.right, value)
+    return branch
+ 
+def search(tree, value):
     if not tree:
-        return 
-    elif leaf.value == tree.value:
-        return tree
-    while tree:
-        if leaf.value == tree.value:
-            return tree
-        elif leaf.value > tree.value:
-            tree = tree.right
-        else:
-            tree = tree.left
-    return tree 
-   
-@option_getter
-def search(tree, leaf):
-    if not tree:
-        print "Value <%d> not in tree!" % leaf.value
+        print "Value <%d> not in tree!" % value
         return
-    elif tree.value == leaf.value:
-        print "Value <%d> is in tree!" % leaf.value
+    elif tree.value == value:
+        print "Value <%d> is in tree!" % value
         return
     while tree:
-        if tree.value == leaf.value:
-            print "Value <%d> is in tree!" % leaf.value
+        if tree.value == value:
+            print "Value <%d> is in tree!" % value
             return
-        elif tree.value < leaf.value:
+        elif tree.value < value:
             tree = tree.right
         else:
             tree = tree.left
-    print "Value <%d> is not in tree!" % leaf.value
+    print "Value <%d> is not in tree!" % value
     return    
     
 def tree_walk(tree):
@@ -149,17 +141,23 @@ def tree_min(tree):
 
 
 if __name__ == '__main__':
-    tree = None
+    tree = Tree() 
     while True:
         print "Select option: [1=insert, 2=delete, 3=search, 4=tree_walk, 5=exit]"
         option = raw_input('Enter number of option > ')
         if option == '1':
-            tree = insert(tree)
+            if not tree.root:
+                tree.root = create_leaf()
+            else:
+                leaf = create_leaf()
+                insert(tree.root, leaf)     
         elif option == '2':
-            tree = delete(tree)
+            value = get_value()
+            delete(tree, tree.root, value) 
         elif option == '3':
-            search(tree)
+            value = get_value()
+            search(tree.root, value)
         elif option == '4':
-            tree_walk(tree)    
+            tree_walk(tree.root) 
         else:
             break

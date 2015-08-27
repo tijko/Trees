@@ -64,7 +64,6 @@ sub insert {
         return;
 
     } elsif ($$tree->{value} >= $value) { 
-        print $$tree, "\n";    
         insert \$$tree->{left}, $$tree, $value;
     } else {
         insert \$$tree->{right}, $$tree, $value;

@@ -148,7 +148,7 @@ sub dump_tree {
 
     my ($tree) = @_;    
 
-    if ($tree->{value}) {
+    if ($tree) {
         if ($tree->{left} && $tree->{right}) {
             print "Node: $tree->{value} - Left: $tree->{left}->{value} ";
             print "Right: $tree->{right}->{value}\n";

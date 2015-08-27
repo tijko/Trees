@@ -145,29 +145,34 @@ sub search {
 }
 
 sub dump_tree {
-    my ($tree) = @_;
+
+    my ($tree) = @_;    
 
     if ($tree->{value}) {
-        if ($tree->{left}->{value} && $tree->{right}->{value}) {
+        if ($tree->{left} && $tree->{right}) {
             print "Node: $tree->{value} - Left: $tree->{left}->{value} ";
             print "Right: $tree->{right}->{value}\n";
-        } elsif ($tree->{left}->{value} && !$tree->{right}->{value}) {
+        } elsif ($tree->{left} && !$tree->{right}) {
             print "Node: $tree->{value} - Left: $tree->{left}->{value} ";
             print "Right: <Null>\n";
-        } elsif ($tree->{right}->{value} && !$tree->{left}->{value}) {
-            print "Node: $tree->{value} - Left: <Null> Right: $tree->{right}->{value}\n";
-        } elsif (!$tree->{right}->{value} && !$tree->{left}->{value} && !$tree->{parent}->{value}) {
+        } elsif ($tree->{right} && !$tree->{left}) {
+            print "Node: $tree->{value} - Left: <Null> ";
+            print "Right: $tree->{right}->{value}\n";
+        } elsif (!$tree->{right} && !$tree->{left} && !$tree->{parent}) {
             print "Node: $tree->{value}\n";
         }
-        dump_tree($$tree{left});
-        dump_tree($$tree{right});
+
+        dump_tree $tree->{left};
+        dump_tree $tree->{right};
     }
 
     return;
 }
 
 sub input_value {
+
     my $value;
+
     while (1) {
         print "Enter Value: ";
         $value = <>;
@@ -178,6 +183,7 @@ sub input_value {
             last;
         }
     }
+
     return $value;
 }
 

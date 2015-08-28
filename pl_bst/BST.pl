@@ -6,7 +6,10 @@ use warnings;
 
 sub insert_node;
 sub retrieve_node;
+sub delete_node;
 sub dump_tree;
+sub transplant;
+sub min_tree;
 
 sub new {
     my $class = shift;
@@ -34,7 +37,12 @@ sub bst_menu {
             insert_node \$tree->{root}, undef, $value;
         } elsif ($choice == 2) {
             my $value = input_value();
-            delete_node $tree, $value;
+            my $node = retrieve_node \$tree->{root}, $value;
+            if (!$$node) {
+                print "$value is not in Tree!\n";
+            } else {
+                delete_node \$tree, \$$node;
+            }
         } elsif ($choice == 3) {
             my $value = input_value();
             my $node = retrieve_node \$tree->{root}, $value;
@@ -77,22 +85,63 @@ sub insert_node {
 }        
     
 sub delete_node {
-    return;
+
+    my ($tree, $node) = @_;
+
+    if (!$$node->{left}) {
+        transplant \$$tree, \$$node, \$$node->{right};
+    } elsif (!$$node->{right}) {
+        transplant \$$tree, \$$node, \$$node->{left};
+    } else {
+
+        my $tmp = $$node;
+        my $branch = min_tree \$$node->{right};
+
+        if ($$branch->{parent} != $$node) {
+            my $branch_tmp = $$branch;
+            transplant \$$tree, \$$branch, \$$branch->{right};
+            $$branch = $branch_tmp;
+            $tmp->{right}->{left} = undef;
+            $$branch->{right} = $$node->{right};
+            $$branch->{right}->{parent} = $$branch;
+        }
+
+        transplant \$$tree, \$$node, \$$branch;
+        $$branch->{left} = $tmp->{left};
+        $$branch->{left}->{parent} = $$branch;
+    }
 }
 
 sub transplant {
-    return;
+
+    my ($tree, $out, $in) = @_;
+
+    if (!$$out->{parent}) {
+        $$in->{parent} = undef;
+        $$tree->{root} = $$in;
+        return;
+    }
+
+    if ($$out->{parent}->{left} and $$out->{parent}->{left} == $$out) {
+        $$out->{parent}->{left} = $$in;
+    } else {
+        $$out->{parent}->{right} = $$in;
+    }
+
+    if ($$in) {
+        $$in->{parent} = $$out->{parent};
+    }
 }
 
 sub min_tree {
 
     my ($tree) = @_;
 
-    if (!$tree->{left}) {
-        return $tree;
+    if (!$$tree->{left}) {
+        return \$$tree;
     }
 
-    return min_tree($tree->{left});
+    return min_tree \$$tree->{left};
 }
 
 sub retrieve_node {

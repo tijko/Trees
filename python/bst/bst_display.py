@@ -186,9 +186,11 @@ def unbalanced(length):
     return range(1, length)
 
 if __name__ == "__main__":
-    tree_display = Display((700, 650))
+    tree_display = Display((1000, 800))
     bst = BST()
-    for value in unique_values(99, 50):
+    for value in unique_values(300, 200):
         bst.insert(value)
     tree_display.draw_tree(bst)
-    sleep(30)
+    while 1:
+        tree_display.update()
+    #sleep(30)

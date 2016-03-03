@@ -33,7 +33,7 @@ class RBTree(object):
         self.height = 0
         
     def insert(self, value):
-        if self.root is None:
+        if self.root is None: # handle if deleted down to a NIL
             self.root = Node(value)
             self.root.left = NIL
             self.root.right = NIL
@@ -78,6 +78,7 @@ class RBTree(object):
             print('Empty tree')
         else:
             self._delete(self.root, value)
+            self.level_fixup(self.root)
 
     def _delete(self, node, value):
         if node == NIL:
@@ -97,18 +98,21 @@ class RBTree(object):
             replace = node.left
             self.transplant(node, node.left)
         else:
-            successor = min_tree(node.right)
+            successor = self.min_tree(node.right)
             original_color = successor.color
             replace = successor.right
             if successor == node.right:
+                replace.parent = successor
+            else:
                 self.transplant(successor, successor.right)
                 successor.right = node.right
                 successor.right.parent = successor
             self.transplant(node, successor)
             successor.left = node.left
             successor.left.parent = successor
+            successor.color = node.color
         if original_color == BLACK:
-            self.delete_fixup(replace)            
+            self.fixup_delete(replace)            
 
     def transplant(self, nodeout, nodein):
         if nodeout.parent == NIL:
@@ -117,8 +121,7 @@ class RBTree(object):
             nodeout.parent.left = nodein
         else:
             nodeout.parent.right = nodein
-        if nodein != NIL:
-            nodein.parent = nodeout.parent
+        nodein.parent = nodeout.parent
 
     def fixup_insert(self, node):
         while node.parent.color == RED:
@@ -239,7 +242,7 @@ class RBTree(object):
         node.parent = nodeup
 
     def min_tree(self, node):
-        if node.left is None:
+        if node.left == NIL:
             return node
         return self.min_tree(node.left)
 
@@ -382,10 +385,12 @@ def unbalanced(length):
 if __name__ == "__main__":
     rbt = RBTree()
     tree_display = Display((1000, 800))
-    #for value in unique_list(300, 200):
-    for value in unbalanced(40):
+    values = [41, 38, 31, 12, 19, 8]
+    for value in values:
         rbt.insert(value)
         tree_display.display_tree(rbt)
-    sleep(1)
-    tree_display.display_tree(rbt)
-    rbt.preorder()
+        sleep(1)
+    for value in values[::-1]:
+        rbt.delete(value)
+        tree_display.display_tree(rbt)
+        sleep(1)

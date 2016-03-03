@@ -256,6 +256,19 @@ class RBTree(object):
         print('{}'.format(node.value))
         self._inorder(node.right)
 
+    def preorder(self):
+        if self.root is None:
+            print('Empty tree')
+        else:
+            self._preorder(self.root)
+
+    def _preorder(self, node):
+        if node == NIL:
+            return
+        print('{} '.format(node.value))
+        self._preorder(node.left)
+        self._preorder(node.right)
+
     def get_height(self):
         self._height()
         return self.height
@@ -363,16 +376,16 @@ def unique_list(span, length):
     return value_list
 
 def unbalanced(length):
-    return range(1, length)
+    return range(length)
 
 
 if __name__ == "__main__":
     rbt = RBTree()
     tree_display = Display((1000, 800))
-    for value in unique_list(300, 200):
+    #for value in unique_list(300, 200):
+    for value in unbalanced(40):
         rbt.insert(value)
         tree_display.display_tree(rbt)
-        sleep(2)
+    sleep(1)
     tree_display.display_tree(rbt)
-    while 1:
-        tree_display.update()
+    rbt.preorder()

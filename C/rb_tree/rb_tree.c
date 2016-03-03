@@ -136,7 +136,9 @@ void delete(struct Tree *tree, struct Node *node, int value)
             struct Node *successor = min_tree(tree, node->right);
             color = successor->color;
             replacement = successor->right;
-            if (successor != node->right) {
+            if (successor == node->right)
+                replacement->parent = successor;
+            else {
                 transplant(tree, successor, successor->right);
                 successor->right = node->right;
                 successor->right->parent = successor;
@@ -223,7 +225,7 @@ void delete_fixup(struct Tree *tree, struct Node *node)
                 node->parent->color = BLACK;
                 sibling->right->color = BLACK;
                 left_rotate(tree, node->parent);
-                tree->root = node;
+                node = tree->root;
             }
         } else {
             struct Node *sibling = node->parent->left;
@@ -249,7 +251,7 @@ void delete_fixup(struct Tree *tree, struct Node *node)
                 node->parent->color = BLACK;
                 sibling->left->color = BLACK;
                 right_rotate(tree, node->parent);
-                tree->root = node;
+                node = tree->root;
             }
         }
     }

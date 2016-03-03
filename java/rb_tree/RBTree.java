@@ -144,7 +144,9 @@ public class RBTree
                 Node successor = min_tree(node.right);
                 color = successor.color;
                 replacement = successor.right;
-                if (successor != node.right) {
+                if (successor == node.right)
+                    replacement.parent = successor;
+                else {
                     transplant(successor, successor.right);
                     successor.right = node.right;
                     successor.right.parent = successor;
@@ -189,7 +191,7 @@ public class RBTree
                     node.parent.color = BLACK;
                     sibling.right.color = BLACK;
                     left_rotate(node.parent);
-                    root = node;
+                    node = root;
                 }
             } else {
                 Node sibling = node.parent.left;
@@ -216,7 +218,7 @@ public class RBTree
                     node.parent.color = BLACK;
                     sibling.left.color = BLACK;
                     right_rotate(node.parent);
-                    root = node;
+                    node = root;
                 }
             }
         }
@@ -233,8 +235,7 @@ public class RBTree
         else
             node_out.parent.right = node_in;
 
-        if (node_in != NIL)
-            node_in.parent = node_out.parent;
+        node_in.parent = node_out.parent;
     }
 
     public static Node min_tree(Node node)

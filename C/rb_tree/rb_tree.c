@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h> // sleep
 #include <stdlib.h>
 
 
@@ -34,19 +35,29 @@ void delete_fixup(struct Tree *tree, struct Node *node);
 void left_rotate(struct Tree *tree, struct Node *node);
 void right_rotate(struct Tree *tree, struct Node *node);
 void free_tree(struct Tree *tree);
+void free_all_nodes(struct Tree *tree, struct Node *node);
 void free_node(struct Tree *tree, struct Node *node);
 
 
 int main(int argc, char *argv[])
 {
     struct Tree *tree = rb_tree_init();
-    for (int i=0; i < 40; i++)
-        insert(tree, tree->root, i);
+    int values[] = {41, 38, 31, 12, 19, 8};
+    int dvalues[] = {8, 12, 19, 31, 38, 41};
 
-    inorder(tree, tree->root);
-    printf("\n");
+    for (int i=0; i < 6; i++) 
+        insert(tree, tree->root, values[i]);
+
     preorder(tree, tree->root);
     printf("\n");
+
+    for (int i=0; i < 6; i++) {
+        delete(tree, tree->root, dvalues[i]);
+        preorder(tree, tree->root);
+        printf("\n");
+        sleep(2);
+    }
+
     free_tree(tree);
     return 0;
 }
@@ -148,6 +159,7 @@ void delete(struct Tree *tree, struct Node *node, int value)
             successor->left = node->left;   
             successor->left->parent = successor;
             successor->color = node->color;
+            free_node(tree, node);
         }
 
         if (color == BLACK)
@@ -292,6 +304,7 @@ void left_rotate(struct Tree *tree, struct Node *node)
 
     node_up->parent = node->parent;
     node_up->left = node;
+    node->parent = node_up;
 }
 
 void right_rotate(struct Tree *tree, struct Node *node)
@@ -308,7 +321,8 @@ void right_rotate(struct Tree *tree, struct Node *node)
         node->parent->right = node_up;
 
     node_up->parent = node->parent;
-    node->right = node;
+    node_up->right = node;
+    node->parent = node_up;
 }
 
 void inorder(struct Tree *tree, struct Node *node)
@@ -331,16 +345,22 @@ void preorder(struct Tree *tree, struct Node *node)
 
 void free_tree(struct Tree *tree)
 {
-    free_node(tree, tree->root);
+    if (tree->root && tree->root != tree->nil)
+        free_all_nodes(tree, tree->root);
     free(tree->nil);
     free(tree);
 }
 
-void free_node(struct Tree *tree, struct Node *node)
+void free_all_nodes(struct Tree *tree, struct Node *node)
 {
     if (node->left != tree->nil)
         free_node(tree, node->left);
     if (node->right != tree->nil)
         free_node(tree, node->right);
+    free(node);
+}
+
+void free_node(struct Tree *tree, struct Node *node)
+{
     free(node);
 }

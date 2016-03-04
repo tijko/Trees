@@ -214,30 +214,28 @@ class RBTree(object):
     def left_rotate(self, node):
         nodeup = node.right
         node.right = nodeup.left
-        if node.right != NIL:
-            node.right.parent = node
-        nodeup.parent = node.parent
+        node.right.parent = node
         if node.parent == NIL:
             self.root = nodeup
         elif node.parent.left == node:
-            nodeup.parent.left = nodeup
+            node.parent.left = nodeup
         else:
-            nodeup.parent.right = nodeup
+            node.parent.right = nodeup
+        nodeup.parent = node.parent
         nodeup.left = node
         node.parent = nodeup
 
     def right_rotate(self, node):
         nodeup = node.left
         node.left = nodeup.right
-        if node.left != NIL:
-            node.left.parent = node
-        nodeup.parent = node.parent
-        if nodeup.parent == NIL:
+        node.left.parent = node
+        if node.parent == NIL:
             self.root = nodeup
         elif node.parent.left == node:
-            nodeup.parent.left = nodeup
+            node.parent.left = nodeup
         else:
-            nodeup.parent.right = nodeup
+            node.parent.right = nodeup
+        nodeup.parent = node.parent
         nodeup.right = node
         node.parent = nodeup
 

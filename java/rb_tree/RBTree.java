@@ -260,6 +260,7 @@ public class RBTree
 
         node_up.parent = node.parent;
         node_up.left = node;
+        node.parent = node_up;
     }
 
     public static void right_rotate(Node node)
@@ -277,6 +278,7 @@ public class RBTree
 
         node_up.parent = node.parent;
         node_up.right = node;
+        node.parent = node_up;
     }
 
     public static void inorder()

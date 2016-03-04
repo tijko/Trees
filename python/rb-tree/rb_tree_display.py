@@ -389,8 +389,8 @@ if __name__ == "__main__":
     for value in values:
         rbt.insert(value)
         tree_display.display_tree(rbt)
-        sleep(20)
+        sleep(2)
     for value in range(10):
         rbt.delete(value)
         tree_display.display_tree(rbt)
-        sleep(20)
+        sleep(2)

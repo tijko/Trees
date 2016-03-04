@@ -214,7 +214,8 @@ class RBTree(object):
     def left_rotate(self, node):
         nodeup = node.right
         node.right = nodeup.left
-        node.right.parent = node
+        if node.right != NIL:
+            node.right.parent = node
         if node.parent == NIL:
             self.root = nodeup
         elif node.parent.left == node:
@@ -228,7 +229,8 @@ class RBTree(object):
     def right_rotate(self, node):
         nodeup = node.left
         node.left = nodeup.right
-        node.left.parent = node
+        if node.left != NIL:
+            node.left.parent = node
         if node.parent == NIL:
             self.root = nodeup
         elif node.parent.left == node:
@@ -383,12 +385,12 @@ def unbalanced(length):
 if __name__ == "__main__":
     rbt = RBTree()
     tree_display = Display((1000, 800))
-    values = [41, 38, 31, 12, 19, 8]
+    values = [3, 9, 0, 1, 2, 5, 7, 6, 8, 4]
     for value in values:
         rbt.insert(value)
         tree_display.display_tree(rbt)
-        sleep(1)
-    for value in values[::-1]:
+        sleep(20)
+    for value in range(10):
         rbt.delete(value)
         tree_display.display_tree(rbt)
-        sleep(1)
+        sleep(20)

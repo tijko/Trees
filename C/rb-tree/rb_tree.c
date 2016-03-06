@@ -38,7 +38,7 @@ void right_rotate(struct Tree *tree, struct Node *node);
 void level_fixup(struct Tree *tree, struct Node *node);
 void free_tree(struct Tree *tree);
 void free_all_nodes(struct Tree *tree, struct Node *node);
-void free_node(struct Tree *tree, struct Node *node);
+void free_node(struct Node *node);
 
 
 int main(int argc, char *argv[])
@@ -50,14 +50,14 @@ int main(int argc, char *argv[])
         insert(tree, tree->root, values[i]);
         preorder(tree, tree->root);
         printf("\n");
-        sleep(2);
+    //    sleep(2);
     }
 
     for (int i=0; i < 10; i++) {
         delete(tree, tree->root, i);
         preorder(tree, tree->root);
         printf("\n");
-        sleep(2);
+    //    sleep(2);
     }
 
     free_tree(tree);
@@ -148,9 +148,11 @@ void delete(struct Tree *tree, struct Node *node, int value)
         if (node->left == tree->nil) {
             replacement = node->right;
             transplant(tree, node, node->right);
+            free_node(node);
         } else if (node->right == tree->nil) {
             replacement = node->left;
             transplant(tree, node, node->left);
+            free_node(node);
         } else {
             struct Node *successor = min_tree(tree, node->right);
             color = successor->color;
@@ -167,7 +169,7 @@ void delete(struct Tree *tree, struct Node *node, int value)
             successor->left = node->left;   
             successor->left->parent = successor;
             successor->color = node->color;
-            free_node(tree, node);
+            free_node(node);
         }
 
         if (color == BLACK)
@@ -381,13 +383,13 @@ void free_tree(struct Tree *tree)
 void free_all_nodes(struct Tree *tree, struct Node *node)
 {
     if (node->left != tree->nil)
-        free_node(tree, node->left);
+        free_node(node->left);
     if (node->right != tree->nil)
-        free_node(tree, node->right);
+        free_node(node->right);
     free(node);
 }
 
-void free_node(struct Tree *tree, struct Node *node)
+void free_node(struct Node *node)
 {
     free(node);
 }

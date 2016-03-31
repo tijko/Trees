@@ -5,7 +5,7 @@ from pygame import *
 from math import sqrt, inf
 from random import randint
 
-from time import sleep #debug
+from time import sleep
 
 
 class Node(object):
@@ -79,7 +79,20 @@ class KdTree(object):
                 new_node.min_y = node.value[1]
         setattr(node, branch, new_node)
              
-dist = lambda x1, y1, x2, y2: sqrt((x1 - x2)**2 + (y1 - y2)**2)
+
+dist_to_point = lambda x1, y1, x2, y2: sqrt((x1 - x2)**2 + (y1 - y2)**2)
+
+def dist_to_rect(node, p):
+    x = y = 0
+    if p[0] < node.min_x:
+        x = p[0] - node.min_x
+    elif p[0] > node.max_x:
+        x = p[0] - node.max_x
+    if p[1] < node.min_y:
+        y = p[1] - node.min_y
+    elif p[1] > node.max_y:
+        y = p[1] - node.max_y 
+    return sqrt(x * x + y * y)
 
 def load_treats(fname):
     with open(fname) as f:
@@ -115,7 +128,9 @@ def create_points(n):
 def find_neighbor(tree, node, target):
     if node is None:
         return
-    node_dist = dist(*node.value, *target)
+    if tree.close < dist_to_rect(node, target):
+        return
+    node_dist = dist_to_point(*node.value, *target)
     if node_dist < tree.close:
         tree.close = node_dist
         tree.close_coord = node.value
@@ -125,11 +140,10 @@ def find_neighbor(tree, node, target):
     else:
         if target[node.d] < node.value[node.d]:
             find_neighbor(tree, node.left, target)
-        elif target[node.d] > node.value[node.d]:
             find_neighbor(tree, node.right, target)
         else:
-            find_neighbor(tree, node.left, target)
             find_neighbor(tree, node.right, target)
+            find_neighbor(tree, node.left, target)
 
 def in_tree(node, value):
     if node is None: return False

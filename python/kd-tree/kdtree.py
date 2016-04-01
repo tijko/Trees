@@ -23,6 +23,8 @@ class Node(object):
 
 
 DIMENSION = 0x1
+MAX_X = (101, 699)
+MAX_Y = (1, 649)
 
 class KdTree(object):
 
@@ -30,6 +32,8 @@ class KdTree(object):
         self.root = None
         self.close = inf
         self.close_coord = None
+        self.dist_to_point = (lambda x1, y1, x2, y2: 
+                              sqrt((x1 - x2)**2 + (y1 - y2)**2))
 
     def insert(self, value):
         self._insert(self.root, value)
@@ -53,6 +57,10 @@ class KdTree(object):
                     self.create_node(node, 'left', value)
                 else:
                     self._insert(node.left, value)
+
+    def construct_tree_from_list(self, nodes):
+        for node in nodes:
+            self.insert(node)
 
     def create_node(self, node, branch, value):
         new_node = Node(value)
@@ -78,87 +86,89 @@ class KdTree(object):
                 new_node.min_x = node.min_x
                 new_node.min_y = node.value[1]
         setattr(node, branch, new_node)
-             
 
-dist_to_point = lambda x1, y1, x2, y2: sqrt((x1 - x2)**2 + (y1 - y2)**2)
+    def find_closest(self, target):
+        self.find_neighbor(self.root, target)
+        draw_point(self.close_coord, p_color='orange')
 
-def dist_to_rect(node, p):
-    x = y = 0
-    if p[0] < node.min_x:
-        x = p[0] - node.min_x
-    elif p[0] > node.max_x:
-        x = p[0] - node.max_x
-    if p[1] < node.min_y:
-        y = p[1] - node.min_y
-    elif p[1] > node.max_y:
-        y = p[1] - node.max_y 
-    return sqrt(x * x + y * y)
+    def in_tree(self, value):
+        return self._in_tree(self.root, value)
 
-def load_treats(fname):
+    def _in_tree(self, node, value):
+        if node is None: return False
+        if node.value == value: return True
+        if node.value[node.d] < value[node.d]:
+            return in_tree(node.left, value)
+        else:
+            return in_tree(node.right, value)
+                 
+    def find_neighbor(self, node, target):
+        if node is None: return
+        if self.close < self.dist_to_rect(node, target):
+            return
+        node_dist = self.dist_to_point(*node.value, *target)
+        if node_dist < self.close:
+            self.close = node_dist
+            self.close_coord = node.value
+        if node == self.root:
+            self.find_neighbor(node.left, target)
+            self.find_neighbor(node.right, target)
+        else:
+            if target[node.d] < node.value[node.d]:
+                self.find_neighbor(node.left, target)
+                self.find_neighbor(node.right, target)
+            else:
+                self.find_neighbor(node.right, target)
+                self.find_neighbor(node.left, target)
+
+    def dist_to_rect(self, node, target):
+        x = y = 0
+        if target[0] < node.min_x:
+            x = target[0] - node.min_x
+        elif target[0] > node.max_x:
+            x = target[0] - node.max_x
+        if target[1] < node.min_y:
+            y = target[1] - node.min_y
+        elif target[1] > node.max_y:
+            y = target[1] - node.max_y 
+        return sqrt(x * x + y * y)
+
+    @property
+    def print_kdtree(self):
+        self._print(self.root)
+
+    def _print(self, node):
+        if node is not None:
+            print(node.value, node.d, node.level)
+            self._print(node.left)
+            self._print(node.right)
+
+
+def load_points(fname):
     with open(fname) as f:
         treat_data = f.readlines()
-        treats = [tuple(map(float, coords.split())) for coords in treat_data[1:]]
-    treats.insert(0, int(treat_data[0]))
-    return treats
-
-def print_kdtree(node):
-    if node is not None:
-        print(node.value, node.d, node.level)
-        print_kdtree(node.left)
-        print_kdtree(node.right)
+        points = [tuple(map(float, coords.split())) for 
+                            coords in treat_data[1:]]
+    points.insert(0, int(treat_data[0]))
+    return points
         
-def setup():
+def display_setup():
     display.init()
     return display.set_mode((700, 750))
 
-def draw_axis(screen, coords):
+def draw_grid_axis(coords):
     x = draw.line(screen, Color('black'), (0, 650), (700, 650), 5)
     y = draw.line(screen, Color('black'), (100, 0), (100, 750),  5)
     display.update()
 
-def draw_point(screen, coords):
-    draw.circle(screen, Color('violet'), coords, 5)
+def draw_point(coords, p_color='violet'):
+    draw.circle(screen, Color(p_color), coords, 5)
     display.update()
 
-def create_points(n):
-    x = (101, 699)
-    y = (1, 649)
-    return [(randint(*x), randint(*y)) for _ in range(n)]
+def create_random_points(n):
+    return [(randint(*MAX_X), randint(*MAX_Y)) for _ in range(n)]
 
-def find_neighbor(tree, node, target):
-    if node is None:
-        return
-    if tree.close < dist_to_rect(node, target):
-        return
-    node_dist = dist_to_point(*node.value, *target)
-    if node_dist < tree.close:
-        tree.close = node_dist
-        tree.close_coord = node.value
-    if node == tree.root:
-        find_neighbor(tree, node.left, target)
-        find_neighbor(tree, node.right, target)
-    else:
-        if target[node.d] < node.value[node.d]:
-            find_neighbor(tree, node.left, target)
-            find_neighbor(tree, node.right, target)
-        else:
-            find_neighbor(tree, node.right, target)
-            find_neighbor(tree, node.left, target)
-
-def in_tree(node, value):
-    if node is None: return False
-    if node.value == value: return True
-    if node.value[node.d] < value[node.d]:
-        return in_tree(node.left, value)
-    else:
-        return in_tree(node.right, value)
-
-def find_closest(screen, tree, target):
-    find_neighbor(tree, tree.root, target)
-    draw.circle(screen, Color('orange'), tree.close_coord, 5)
-    display.update()
-
-def draw_tree(screen, node):
+def display_points(node):
     if node is None:
         return
     parent = node.parent
@@ -197,30 +207,24 @@ def draw_tree(screen, node):
     display.update()
     print('Coords: {} Max: {} Min: {}'.format(node.value, 
          (node.max_x, node.max_y), (node.min_x, node.min_y)))
-    draw_tree(screen, node.left)
-    draw_tree(screen, node.right)
+    display_points(node.left)
+    display_points(node.right)
 
-def build_tree(treats):
-    tree = KdTree()
-    for treat in treats:
-        tree.insert(treat)
-    return tree
-        
 if __name__ == "__main__":
     RUNNING = True
-    screen = setup()
+    screen = display_setup()
     screen.fill(Color('white'))
     display.update()
-    draw_axis(screen, (40, 40))
+    draw_grid_axis((40, 40))
     tree = KdTree()
-
-    treats = create_points(100)
-    tree = build_tree(treats)
-    
-    draw_tree(screen, tree.root)
-    target = create_points(1)[0]
-    draw_point(screen, target)
-    find_closest(screen, tree, target)
+    points = create_random_points(100)
+    tree.construct_tree_from_list(points)
+    tree.print_kdtree
+        
+    display_points(tree.root)
+    target = create_random_points(1)[0]
+    draw_point(target)
+    tree.find_closest(target)
     while RUNNING:
         for ev in event.get():
             if ev.type == KEYDOWN and ev.key == K_q:

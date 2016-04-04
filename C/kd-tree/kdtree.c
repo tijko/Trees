@@ -16,6 +16,8 @@ struct Tree *init_tree(void)
     }
 
     new_tree->root = NULL;
+    new_tree->close_dist = MAX_DIST;
+    new_tree->close_coords = NULL;
 
     return new_tree;
 }
@@ -148,9 +150,28 @@ void insert_point_list(struct Tree *tree, int **points, int number_of_points)
     }
 }
 
-struct Node *closest_neighbor(struct Node *root, int *point)
+void closest_neighbor(struct Tree *tree, struct Node *node, int *point)
 {
-    return root;
+    if (node == NULL) return;
+
+    float rect_dist = calculate_distance_rect(node, point);
+    if (rect_dist > tree->close_dist) return;
+
+    float point_dist = calculate_distance_point(node, point);
+    if (point_dist < tree->close_dist) {
+        tree->close_dist = point_dist;
+        tree->close_coords = node->point;
+    }
+
+    int dimension = node->dimension;
+
+    if (node->point[dimension] > point[dimension]) {
+        closest_neighbor(tree, node->left, point);
+        closest_neighbor(tree, node->right, point);
+    } else {
+        closest_neighbor(tree, node->right, point);
+        closest_neighbor(tree, node->left, point);
+    } 
 }
 
 float calculate_distance_point(struct Node *node, int *point)
@@ -203,6 +224,16 @@ int main(int argc, char *argv[])
 
     insert_point_list(tree, points, number_of_points);
 
+    int *test_point = malloc(sizeof(int) * 2);
+    test_point[0] = rand() % MAX;
+    test_point[1] = rand() % MAX;
+    closest_neighbor(tree, tree->root, test_point);
+
+    printf("Point: (%d, %d) closest tree neighbor is Point: (%d, %d)\n",
+           test_point[0], test_point[1], tree->close_coords[0], tree->close_coords[1]);
+    free_tree(tree);
+    free(points);
+    free(test_point);
 
     return 0;
 }

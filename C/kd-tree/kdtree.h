@@ -2,6 +2,7 @@
 
 
 #define MAX 65536
+#define MAX_DIST sqrt((MAX * MAX) + (MAX * MAX))
 
 struct Node {
     struct Node *left;
@@ -31,17 +32,17 @@ void free_nodes(struct Node *node);
 
 void free_node(struct Node *node);
 
-void insert_node(struct Node *node, struct Node *new_node);
+int **create_random_points(int number_of_points);
 
-void insert_point_list(struct Tree *tree, int **points, int number_of_points);
+void insert_node(struct Node *node, struct Node *new_node);
 
 void set_dimension(struct Node *node, struct Node *new_node);
 
-struct Node closest_neighbor(struct Node *root, int *point); 
+void insert_point_list(struct Tree *tree, int **points, int number_of_points);
+
+struct Node *closest_neighbor(struct Node *root, int *point); 
 
 float calculate_distance_point(struct Node *node, int *point);
 
 float calculate_distance_rect(struct Node *node, int *point);
-
-int **create_random_points(int number_of_points);
 

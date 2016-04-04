@@ -1,8 +1,10 @@
 // KD-Tree declarations
 
+#include <limits.h>
+
 
 #define MAX 65536
-#define MAX_DIST sqrt((MAX * MAX) + (MAX * MAX))
+#define MAX_DIST LONG_MAX
 
 struct Node {
     struct Node *left;
@@ -18,6 +20,8 @@ struct Node {
 
 struct Tree {
     struct Node *root;
+    float close_dist;
+    int *close_coords;
 };
 
 struct Tree *init_tree(void);
@@ -40,7 +44,7 @@ void set_dimension(struct Node *node, struct Node *new_node);
 
 void insert_point_list(struct Tree *tree, int **points, int number_of_points);
 
-struct Node *closest_neighbor(struct Node *root, int *point); 
+void closest_neighbor(struct Tree *tree, struct Node *node, int *point);
 
 float calculate_distance_point(struct Node *node, int *point);
 

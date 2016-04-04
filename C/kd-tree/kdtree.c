@@ -148,6 +148,36 @@ void insert_point_list(struct Tree *tree, int **points, int number_of_points)
     }
 }
 
+struct Node *closest_neighbor(struct Node *root, int *point)
+{
+    return root;
+}
+
+float calculate_distance_point(struct Node *node, int *point)
+{
+    int dx = node->point[0] - point[0];
+    int dy = node->point[1] - point[1];
+
+    return sqrt((dx * dx) + (dy * dy));
+}
+
+float calculate_distance_rect(struct Node *node, int *point)
+{
+    int dx = 0, dy = 0;
+
+    if (node->min_x > point[0])
+        dx = point[0] - node->min_x;
+    else if (point[0] > node->max_x)
+        dx = point[0] - node->max_x;
+
+    if (node->min_y > point[1])
+        dy = point[1] - node->min_y;
+    else if (point[1] > node->max_y)
+        dy = point[1] - node->max_y;
+
+    return sqrt((dx * dx) + (dy * dy));
+}
+
 int main(int argc, char *argv[])
 {
     struct Tree *tree = init_tree();

@@ -3,6 +3,7 @@
 #include <limits.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "kdtree.h"
 
@@ -19,8 +20,12 @@ struct Tree *init_tree(void)
 
     new_tree->root = NULL;
     new_tree->close_dist = LONG_MAX;
+    /*
     new_tree->max_x = LONG_MAX;
     new_tree->max_y = LONG_MAX;
+    */
+    new_tree->max_x = 1.0;
+    new_tree->max_y = 1.0;
     new_tree->close_point = NULL;
 
     return new_tree;
@@ -147,10 +152,10 @@ void insert(struct Tree *tree, void *point)
     if (tree->root == NULL)
         init_root(tree, point);
     else
-        tree->insert(tree->root, point);
+        tree->insert(tree, tree->root, point);
 }
 
-void insert_int_point(struct Node *node, void *point)
+void insert_int_point(struct Tree *tree, struct Node *node, void *point)
 {
     int dimension = node->dimension;
 
@@ -162,23 +167,23 @@ void insert_int_point(struct Node *node, void *point)
             struct Node *new_node = init_node(point);
             node->left = new_node;
             new_node->parent = node;
-            new_node->dimension ^= dimension;
-            set_dimension(node, new_node);
+            new_node->dimension = dimension ^ DIMENSION;
+            tree->set_dimension(node, new_node);
         } else 
-            insert_int_point(node->left, point);
+            insert_int_point(tree, node->left, point);
     } else {
         if (node->right == NULL) {
             struct Node *new_node = init_node(point);
             node->right = new_node;
             new_node->parent = node;
-            new_node->dimension ^= dimension;
-            set_dimension(node, new_node);
+            new_node->dimension = dimension ^ DIMENSION;
+            tree->set_dimension(node, new_node);
         } else 
-            insert_int_point(node->right, point);
+            insert_int_point(tree, node->right, point);
     }
 }
 
-void insert_long_point(struct Node *node, void *point)
+void insert_long_point(struct Tree *tree, struct Node *node, void *point)
 {
     int dimension = node->dimension;
 
@@ -190,23 +195,23 @@ void insert_long_point(struct Node *node, void *point)
             struct Node *new_node = init_node(point);
             node->left = new_node;
             new_node->parent = node;
-            new_node->dimension ^= dimension;
-            set_dimension(node, new_node);
+            new_node->dimension = dimension ^ DIMENSION;
+            tree->set_dimension(node, new_node);
         } else 
-            insert_long_point(node->left, point);
+            insert_long_point(tree, node->left, point);
     } else {
         if (node->right == NULL) {
             struct Node *new_node = init_node(point);
             node->right = new_node;
             new_node->parent = node;
-            new_node->dimension ^= dimension;
-            set_dimension(node, new_node);
+            new_node->dimension = dimension ^ DIMENSION;
+            tree->set_dimension(node, new_node);
         } else 
-            insert_long_point(node->right, point);
+            insert_long_point(tree, node->right, point);
     }
 }
 
-void insert_float_point(struct Node *node, void *point)
+void insert_float_point(struct Tree *tree, struct Node *node, void *point)
 {
     int dimension = node->dimension;
 
@@ -218,23 +223,23 @@ void insert_float_point(struct Node *node, void *point)
             struct Node *new_node = init_node(point);
             node->left = new_node;
             new_node->parent = node;
-            new_node->dimension ^= dimension;
-            set_dimension(node, new_node);
+            new_node->dimension = dimension ^ DIMENSION;
+            tree->set_dimension(node, new_node);
         } else 
-            insert_float_point(node->left, point);
+            insert_float_point(tree, node->left, point);
     } else {
         if (node->right == NULL) {
             struct Node *new_node = init_node(point);
             node->right = new_node;
             new_node->parent = node;
-            new_node->dimension ^= dimension;
-            set_dimension(node, new_node);
+            new_node->dimension = dimension ^ DIMENSION;
+            tree->set_dimension(node, new_node);
         } else 
-            insert_float_point(node->right, point);
+            insert_float_point(tree, node->right, point);
     }
 }
 
-void insert_double_point(struct Node *node, void *point)
+void insert_double_point(struct Tree *tree, struct Node *node, void *point)
 {
     int dimension = node->dimension;
 
@@ -246,23 +251,122 @@ void insert_double_point(struct Node *node, void *point)
             struct Node *new_node = init_node(point);
             node->left = new_node;
             new_node->parent = node;
-            new_node->dimension ^= dimension;
-            set_dimension(node, new_node);
+            new_node->dimension = dimension ^ DIMENSION;
+            tree->set_dimension(node, new_node);
         } else 
-            insert_double_point(node->left, point);
+            insert_double_point(tree, node->left, point);
     } else {
         if (node->right == NULL) {
             struct Node *new_node = init_node(point);
             node->right = new_node;
             new_node->parent = node;
-            new_node->dimension ^= dimension;
-            set_dimension(node, new_node);
+            new_node->dimension = dimension ^ DIMENSION;
+            tree->set_dimension(node, new_node);
         } else 
-            insert_double_point(node->right, point);
+            insert_double_point(tree, node->right, point);
     }
 }
 
-void set_dimension(struct Node *node, struct Node *new_node)
+void set_int_dimension(struct Node *node, struct Node *new_node)
+{
+    int dimension = node->dimension;
+
+    int *point = (int *) node->point;
+
+    if (!dimension) {
+        if (new_node == node->left) {
+            new_node->max_x = point[0];
+            new_node->max_y = node->max_y;
+            new_node->min_x = node->min_x;
+            new_node->min_y = node->min_y;    
+        } else {
+            new_node->max_x = node->max_x;
+            new_node->max_y = node->max_y;
+            new_node->min_x = point[0];
+            new_node->min_y = node->min_y;
+        }
+    } else {
+        if (new_node == node->left) {
+            new_node->max_x = node->max_x;
+            new_node->max_y = point[1];
+            new_node->min_x = node->min_x;
+            new_node->min_y = node->min_y;
+        } else {
+            new_node->max_x = node->max_x;
+            new_node->max_y = node->max_y;
+            new_node->min_x = node->min_x;
+            new_node->min_y = point[1];
+        }
+    }
+}
+
+void set_long_dimension(struct Node *node, struct Node *new_node)
+{
+    int dimension = node->dimension;
+
+    long *point = (long *) node->point;
+
+    if (!dimension) {
+        if (new_node == node->left) {
+            new_node->max_x = point[0];
+            new_node->max_y = node->max_y;
+            new_node->min_x = node->min_x;
+            new_node->min_y = node->min_y;    
+        } else {
+            new_node->max_x = node->max_x;
+            new_node->max_y = node->max_y;
+            new_node->min_x = point[0];
+            new_node->min_y = node->min_y;
+        }
+    } else {
+        if (new_node == node->left) {
+            new_node->max_x = node->max_x;
+            new_node->max_y = point[1];
+            new_node->min_x = node->min_x;
+            new_node->min_y = node->min_y;
+        } else {
+            new_node->max_x = node->max_x;
+            new_node->max_y = node->max_y;
+            new_node->min_x = node->min_x;
+            new_node->min_y = point[1];
+        }
+    }
+}
+
+void set_float_dimension(struct Node *node, struct Node *new_node)
+{
+    int dimension = node->dimension;
+
+    float *point = (float *) node->point;
+
+    if (!dimension) {
+        if (new_node == node->left) {
+            new_node->max_x = point[0];
+            new_node->max_y = node->max_y;
+            new_node->min_x = node->min_x;
+            new_node->min_y = node->min_y;    
+        } else {
+            new_node->max_x = node->max_x;
+            new_node->max_y = node->max_y;
+            new_node->min_x = point[0];
+            new_node->min_y = node->min_y;
+        }
+    } else {
+        if (new_node == node->left) {
+            new_node->max_x = node->max_x;
+            new_node->max_y = point[1];
+            new_node->min_x = node->min_x;
+            new_node->min_y = node->min_y;
+        } else {
+            new_node->max_x = node->max_x;
+            new_node->max_y = node->max_y;
+            new_node->min_x = node->min_x;
+            new_node->min_y = point[1];
+        }
+    }
+}
+
+void set_double_dimension(struct Node *node, struct Node *new_node)
 {
     int dimension = node->dimension;
 
@@ -301,7 +405,7 @@ void insert_int_point_list(struct Tree *tree, int **points, int number_of_points
         init_root(tree, points[0]);
 
     for (int i=1; i < number_of_points; i++) 
-        tree->insert(tree->root, points[i]);
+        tree->insert(tree, tree->root, points[i]);
 }
 
 void insert_long_point_list(struct Tree *tree, long **points, int number_of_points)
@@ -310,7 +414,7 @@ void insert_long_point_list(struct Tree *tree, long **points, int number_of_poin
         init_root(tree, points[0]);
 
     for (int i=1; i < number_of_points; i++) 
-        tree->insert(tree->root, points[i]);
+        tree->insert(tree, tree->root, points[i]);
 }
 
 void insert_float_point_list(struct Tree *tree, float **points, int number_of_points)
@@ -319,7 +423,7 @@ void insert_float_point_list(struct Tree *tree, float **points, int number_of_po
         init_root(tree, points[0]);
 
     for (int i=1; i < number_of_points; i++) 
-        tree->insert(tree->root, points[i]);
+        tree->insert(tree, tree->root, points[i]);
 }
 
 void insert_double_point_list(struct Tree *tree, double **points, int number_of_points)
@@ -328,7 +432,7 @@ void insert_double_point_list(struct Tree *tree, double **points, int number_of_
         init_root(tree, points[0]);
 
     for (int i=1; i < number_of_points; i++) 
-        tree->insert(tree->root, points[i]);
+        tree->insert(tree, tree->root, points[i]);
 }
 
 void closest_neighbor(struct Tree *tree, struct Node *node, void *point)
@@ -530,16 +634,61 @@ double calculate_distance_double_rect(struct Node *node, void *point)
     return sqrt((dx * dx) + (dy * dy));
 }
 
+/*
+    allow generic floating points list to be returned
+*/
+
+float **read_float_points(char *path)
+{
+    // allow for generic allocations for size of puppy treats...
+
+    FILE *float_fp = fopen(path, "r");
+
+    if (float_fp == NULL)
+        perror("fopen");
+
+    float **points = malloc(sizeof(*points) * 6);
+    if (points == NULL)
+        perror("malloc");
+
+    // skip first line of puppy-treats.txt (the number-count)
+
+    char *line = NULL;
+    size_t line_size = 0;
+
+    for (int i=-1; getline(&line, &line_size, float_fp) != -1; i++) {
+        if (i == -1) continue;
+        points[i] = malloc(sizeof(float) * 2);
+        char *x_coordinate = strtok(line, " ");
+        char *y_coordinate = strtok(NULL, " ");
+        y_coordinate[strlen(y_coordinate) - 1] = '\0';
+        points[i][0] = atof(x_coordinate);
+        points[i][1] = atof(y_coordinate);
+    }
+
+    return points;
+}
+
 int main(int argc, char *argv[])
 {
+    // check argv 
+
+    float **points = NULL;
+
+    if (argc > 1) 
+        points = read_float_points(argv[1]);
+        // handle logic on where to direct the points
+
     struct Tree *tree = init_tree();
 
     if (tree == NULL)
         return 0;
     
+/*
     int number_of_points = 100;
 
     int **points = create_random_int_points(number_of_points);
+*/
 
 #if 0    
 
@@ -552,7 +701,23 @@ int main(int argc, char *argv[])
 
     if (points == NULL)
         free(tree);
+    tree->insert = insert_float_point;
+    tree->closest = closest_float_neighbor;
+    tree->calculate_dist_point = calculate_distance_float_point;
+    tree->calculate_dist_rect = calculate_distance_float_rect;
+    tree->set_dimension = set_float_dimension;
 
+    insert_float_point_list(tree, points, 6);
+    float *test_point = malloc(sizeof(float) * 2);
+
+    test_point[0] = 0.5;
+    test_point[1] = 0.5;
+
+    closest_neighbor(tree, tree->root, test_point); 
+    float *close = (float *) tree->close_point;
+    printf("(%f, %f)\n", close[0], close[1]);
+
+/*
     tree->insert = insert_int_point;
     tree->closest = closest_int_neighbor;
     tree->calculate_dist_point = calculate_distance_int_point;
@@ -572,7 +737,7 @@ int main(int argc, char *argv[])
                test_point[0], test_point[1], point[0], point[1]);
     else
         printf("No closest found!\n");
-
+*/
     free_tree(tree);
     free(points);
     free(test_point);

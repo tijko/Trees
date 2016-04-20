@@ -5,6 +5,7 @@
 
 struct Node {
     int dimension;
+    int visited;
     double max_x;
     double max_y;
     double min_x;
@@ -25,8 +26,11 @@ struct Tree {
     double (*calculate_dist_rect)(struct Node *node, void *point);
     void (*set_dimension)(struct Node *node, struct Node *new_node);
     struct Node *root;
+    struct Node *close_node;
     double close_dist;
 };
+
+static int treats;
 
 struct Tree *init_tree(void);
 
@@ -40,62 +44,18 @@ void free_nodes(struct Node *node);
 
 void free_node(struct Node *node);
 
-int **create_random_int_points(int number_of_points);
-
-long **create_random_long_points(int number_of_points);
-
 float **create_random_float_points(int number_of_points);
-
-double **create_random_double_points(int number_of_points);
-
-void insert(struct Tree *tree, void *point);
-
-void insert_int_point(struct Tree *tree, struct Node *node, void *point);
-
-void insert_long_point(struct Tree *tree, struct Node *node, void *point);
 
 void insert_float_point(struct Tree *tree, struct Node *node, void *point);
 
-void insert_double_point(struct Tree *tree, struct Node *node, void *point);
-
-void set_int_dimension(struct Node *node, struct Node *new_node);
-
-void set_long_dimension(struct Node *node, struct Node *new_node);
-
 void set_float_dimension(struct Node *node, struct Node *new_node);
-
-void set_double_dimension(struct Node *node, struct Node *new_node);
-
-void insert_int_point_list(struct Tree *tree, int **points, int number_of_points);
-
-void insert_long_point_list(struct Tree *tree, long **points, int number_of_points);
 
 void insert_float_point_list(struct Tree *tree, float **points, int number_of_points);
 
-void insert_double_point_list(struct Tree *tree, double **points, int number_of_points);
-
 void closest_neighbor(struct Tree *tree, struct Node *node, void *point);
 
-void closest_int_neighbor(struct Tree *tree, struct Node *node, void *point);
-
-void closest_long_neighbor(struct Tree *tree, struct Node *node, void *point);
-
 void closest_float_neighbor(struct Tree *tree, struct Node *node, void *point);
-
-void closest_double_neighbor(struct Tree *tree, struct Node *node, void *point);
-
-double calculate_distance_int_point(struct Node *node, void *point);
-
-double calculate_distance_int_rect(struct Node *node, void *point);
-
-double calculate_distance_long_point(struct Node *node, void *point);
-
-double calculate_distance_long_rect(struct Node *node, void *point);
 
 double calculate_distance_float_point(struct Node *node, void *point);
 
 double calculate_distance_float_rect(struct Node *node, void *point);
-
-double calculate_distance_double_point(struct Node *node, void *point);
-
-double calculate_distance_double_rect(struct Node *node, void *point);

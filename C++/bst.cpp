@@ -4,78 +4,84 @@
 #include <iostream>
 
 
-struct node {
-    struct node *pr;
-    struct node *lf;
-    struct node *rg;
-    int value;
-} typedef Node;
+template <class T>
+class Node
+{
+    public:
+        Node<T> *pr;
+        Node<T> *lf;
+        Node<T> *rg;
+        T value;
 
+        Node(T value) {
+            pr = NULL;
+            lf = NULL;
+            rg = NULL;
+            this->value = value;
+        }
+};
+
+template <class T>
 class BST
 {
     public:
 
-        void insert_node(int value);
-        void delete_node(int value);
+        void insert_node(T value);
+        void delete_node(T value);
         void print_nodes(void);
 
         BST();
 
     private:
 
-        Node *root;
+        Node<T> *root;
 
-        void insert_node(Node *node, int value);
-        void delete_node(Node *node, int value);
-        void transplant(Node *x, Node *y);
-        void print_nodes(Node *node);
-        Node *create_node(Node *pr, int value);
-        Node *min_node(Node *node);
+        void insert_node(Node<T> *node, T value);
+        void delete_node(Node<T> *node, T value);
+        void transplant(Node<T> *x, Node<T> *y);
+        void print_nodes(Node<T> *node);
+        Node<T> *create_node(Node<T> *pr, T value);
+        Node<T> *min_node(Node<T> *node);
 };
 
-BST::BST(void)
+template <class T>
+BST<T>::BST(void)
 {
     root = NULL;
 }
 
-Node *BST::create_node(Node *pr, int value)
-{
-    Node *new_node = new Node();
-    new_node->value = value;
-    new_node->lf = NULL;
-    new_node->rg = NULL;
-    new_node->pr = pr;
-
-    return new_node;
-}
-
-void BST::insert_node(Node *node, int value)
+template <class T>
+void BST<T>::insert_node(Node<T> *node, T value)
 {
     if (node == NULL)
-        root = create_node(NULL, value);
+        root = new Node<T>(value);
     else if (node->value > value) {
         if (node->lf)
             insert_node(node->lf, value);
         else {
-            Node *new_node = create_node(node, value);
+            Node<T> *new_node = new Node<T>(value);
             node->lf = new_node;
+            new_node->pr = node;
         }
     } else {
         if (node->rg)
             insert_node(node->rg, value);
         else {
-            Node *new_node = create_node(node, value);
+            Node<T> *new_node = new Node<T>(value);
             node->rg = new_node;
+            new_node->pr = node;
         }
     }
 }
 
-void BST::insert_node(int value)
+template <class T>
+void BST<T>::insert_node(T value)
 {
     insert_node(root, value);
 }
 
-void BST::transplant(Node *x, Node *y)
+template <class T>
+void BST<T>::transplant(Node<T> *x, Node<T> *y)
 {
     if (x == root)
         root = y;
@@ -87,14 +93,16 @@ void BST::transplant(Node *x, Node *y)
         y->pr = x->pr;
 }
 
-Node *BST::min_node(Node *node)
+template <class T>
+Node<T> *BST<T>::min_node(Node<T> *node)
 {
     if (!node->lf)
         return node;
     return min_node(node->lf);
 }
 
-void BST::delete_node(Node *node, int value)
+template <class T>
+void BST<T>::delete_node(Node<T> *node, T value)
 {
     if (node == NULL)
         return;
@@ -103,12 +111,12 @@ void BST::delete_node(Node *node, int value)
     else if (node->value < value)
         delete_node(node->rg, value);
     else {
-        if (node->rg and !node->lf)
+        if (!node->lf)
             transplant(node, node->rg);
-        else if (node->lf and !node->rg)
+        else if (!node->rg)
             transplant(node, node->lf);
         else {
-            Node *s = min_node(node->rg);
+            Node<T> *s = min_node(node->rg);
             if (s->pr != node) {
                 transplant(s, s->rg);
                 s->rg = node->rg;
@@ -122,12 +130,14 @@ void BST::delete_node(Node *node, int value)
     }
 }
 
-void BST::delete_node(int value)
+template <class T>
+void BST<T>::delete_node(T value)
 {
     delete_node(root, value);
 }
 
-void BST::print_nodes(Node *node)
+template <class T>
+void BST<T>::print_nodes(Node<T> *node)
 {
     if (!node)
         return;
@@ -137,7 +147,8 @@ void BST::print_nodes(Node *node)
     print_nodes(node->rg);
 }
 
-void BST::print_nodes(void)
+template <class T>
+void BST<T>::print_nodes(void)
 {
     print_nodes(root);
 }
@@ -147,20 +158,25 @@ int main(int argc, char *argv[])
     std::cout << "Binary Search Tree!" << std::endl;
 
     int number_of_test_values = 10;
-    BST tree = BST();
+    BST<int> tree = BST<int>();
 
     std::cout << "Inserting <" << number_of_test_values;
     std::cout << "> random values...." << std::endl;
 
     srand(time(NULL));
 
-
+    int del_value;
     for (int i=0; i < number_of_test_values; i++) {
         int value = rand() % 100;
+        if (i == 5)
+            del_value = value;
         std::cout << "Inserting " << value << std::endl;
         tree.insert_node(value);
     }
 
+    tree.print_nodes();
+    std::cout << "Deleting " << del_value << std::endl;
+    tree.delete_node(del_value);
     tree.print_nodes();
 
     return 0;

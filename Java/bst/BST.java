@@ -67,9 +67,9 @@ public class BST
         } else if (node.value < value) {
             delete(node.right, value);
         } else {
-            if (node.right != null && node.left == null) {
+            if (node.left == null) {
                 transplant(root, node, node.right);
-            } else if (node.left != null && node.right == null) {
+            } else if (node.right == null) {
                 transplant(root, node, node.left);
             } else {
                 Node successor = min(node.right);
@@ -168,10 +168,9 @@ public class BST
         System.out.printf("Find minimum=>\n");
         min();
 
-        System.out.printf("Deleting %d\n", 99);
+        System.out.printf("Deleting %d\n", 43);
         delete(43);
-
-        System.out.printf("Preorder print=>\n");
-        preorder();
+        System.out.printf("Inorder print=>\n"); 
+        inorder();
     }
 }
